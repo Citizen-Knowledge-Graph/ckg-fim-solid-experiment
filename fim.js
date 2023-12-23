@@ -2,10 +2,11 @@ const semver = require("semver");
 const fs = require("fs");
 const fsp = require("fs").promises;
 
-const SCHEMAS_1_FILE = ".storage/schemas1.json";
-const SCHEMAS_2_FILE = ".storage/schemas2.json";
-const JSON_SCHEMA_FILES_DIR = ".storage/json-schema-files";
-const DATA_FIELDS_CONSTRAINTS_FILE = ".storage/data-fields-constraints.json";
+const DIR = ".fim";
+const SCHEMAS_1_FILE = DIR + "/schemas1.json";
+const SCHEMAS_2_FILE = DIR + "/schemas2.json";
+const JSON_SCHEMA_FILES_DIR = DIR + "/json-schema-files";
+const DATA_FIELDS_CONSTRAINTS_FILE = DIR + "/data-fields-constraints.json";
 
 function expandVersionStr(versionStr) {
     return versionStr.split(".").length < 3 ? versionStr + ".0" : versionStr;
@@ -21,7 +22,7 @@ async function fetchAllSchemas() {
         const id = schema.fim_id;
         let version = schema.fim_version;
         if (map.hasOwnProperty(id)) {
-            // we only store the lastest FIM version
+            // store only the lastest FIM version
             if (semver.gt(expandVersionStr(version), expandVersionStr(map[id]))) {
                 map[id] = version;
             }
@@ -29,6 +30,7 @@ async function fetchAllSchemas() {
             map[id] = version;
         }
     }
+    await fs.mkdir(DIR, () => {});
     fs.writeFile(SCHEMAS_1_FILE, JSON.stringify(map, null, 2), "utf8", () => {});
 }
 
@@ -59,6 +61,7 @@ async function extractJsonFromSchemas() {
 }
 
 async function downloadJsonSchemaFiles() {
+    await fs.mkdir(JSON_SCHEMA_FILES_DIR, { recursive: true }, () => {});
     fs.readFile(SCHEMAS_2_FILE, "utf8", async (err, data) => {
         let entries = Object.entries(JSON.parse(data));
         let count = 0;

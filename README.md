@@ -1,1 +1,6 @@
-# ckg-fim-solid-experiment
+# CKG FIM Solid Experiment
+
+
+```sh
+node fim.js
+```
