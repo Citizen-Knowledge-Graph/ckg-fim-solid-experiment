@@ -61,24 +61,9 @@
 </div>
 
 <div style="width: 500px">
-    <shacl-form id="shacl-form"
+    <shacl-form id="shacl-form" style="display: none"
                 data-submit-button="Add"
-                data-value-subject="ckg:citizen-a"
-                data-shapes="
-                    @prefix sh: <http://www.w3.org/ns/shacl#> .
-                    @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-                    @prefix ckg: <http://ckg.de/default#> .
-
-                    ckg:Citizen a sh:NodeShape ;
-                      sh:property [
-                        sh:datatype     xsd:integer ;
-                        sh:minInclusive 1 ;
-                        sh:maxInclusive 100 ;
-                        sh:maxCount     1 ;
-                        sh:name         'Age' ;
-                        sh:path         ckg:hasAge ;
-                    ] .
-        ">
+                data-value-subject="ckg:citizen-a">
     </shacl-form>
 </div>
 
@@ -128,6 +113,26 @@
         }
         return Object.values(groupedItems);
     }
+
+    document.getElementById("add-btn").addEventListener("click", function() {
+        const shaclForm = document.querySelector("shacl-form");
+        let shaclShape = `
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ckg: <http://ckg.de/default#> .
+
+ckg:Citizen a sh:NodeShape ;
+  sh:property [
+    sh:datatype     xsd:integer ;
+    sh:minInclusive 1 ;
+    sh:maxInclusive 100 ;
+    sh:maxCount     1 ;
+    sh:name         'Age' ;
+    sh:path         ckg:hasAge ;
+] .`;
+        shaclForm.setAttribute("data-shapes", shaclShape);
+        shaclForm.style.display = "block";
+    });
 </script>
 
 </body>
