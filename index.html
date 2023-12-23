@@ -63,7 +63,7 @@
 <div style="width: 500px">
     <shacl-form id="shacl-form" style="display: none"
                 data-submit-button="Add"
-                data-value-subject="ckg:citizen-a">
+                data-value-subject="ckg:citizen-a"> <!-- "http://ckg.de/default#citizen-a" -->
     </shacl-form>
 </div>
 
@@ -71,7 +71,7 @@
     const shaclForm = document.querySelector("shacl-form")
 
     shaclForm.addEventListener("submit", () => {
-        const triples = shaclForm.serialize()
+        const triples = shaclForm.serialize() // N-Triples
         console.log(triples)
     });
 </script>
