@@ -37,6 +37,8 @@
             background-color: #7DF9FF;
         }
     </style>
+    <!-- https://github.com/ULB-Darmstadt/shacl-form -->
+    <script src="./node_modules/@ulb-darmstadt/shacl-form/dist/form-default.js" type="module"></script>
 </head>
 <body>
 <div style="padding: 20px">
@@ -51,16 +53,43 @@
                 </div>
             </td>
             <td>
-                &nbsp;&nbsp;
-                <input id="field-value" type="text" placeholder="Value">
-            </td>
-            <td>
                 &nbsp;
                 <button id="add-btn">Add</button>
             </td>
         </tr>
     </table>
 </div>
+
+<div style="width: 500px">
+    <shacl-form id="shacl-form"
+                data-submit-button="Add"
+                data-value-subject="ckg:citizen-a"
+                data-shapes="
+                    @prefix sh: <http://www.w3.org/ns/shacl#> .
+                    @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+                    @prefix ckg: <http://ckg.de/default#> .
+
+                    ckg:Citizen a sh:NodeShape ;
+                      sh:property [
+                        sh:datatype     xsd:integer ;
+                        sh:minInclusive 1 ;
+                        sh:maxInclusive 100 ;
+                        sh:maxCount     1 ;
+                        sh:name         'Age' ;
+                        sh:path         ckg:hasAge ;
+                    ] .
+        ">
+    </shacl-form>
+</div>
+
+<script>
+    const shaclForm = document.querySelector("shacl-form")
+
+    shaclForm.addEventListener("submit", () => {
+        const triples = shaclForm.serialize()
+        console.log(triples)
+    });
+</script>
 
 <script>
     document.getElementById('autocomplete').addEventListener('input', function() {
