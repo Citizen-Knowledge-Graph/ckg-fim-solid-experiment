@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "semver": "^7.5.4"
+    "@comunica/query-sparql-solid": "^2.4.0",
+    "semver": "^7.5.4",
+    "solid-node-interactive-auth": "^1.1.1"
   }
 }
