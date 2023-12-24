@@ -27,3 +27,7 @@ node solid.js # this will trigger a browser authorization
 ```
 
 You may check your pod content using [penny.vincenttunru.com](https://penny.vincenttunru.com) or your local file system.
+
+```shell
+npm start # starts the server
+```
