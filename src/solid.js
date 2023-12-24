@@ -30,12 +30,12 @@ async function read() {
     });
 }
 
-async function write() {
+export async function write(triples) {
     const session = await interactiveLogin({ oidcIssuer: SERVER });
     const engine = new QueryEngine();
     let query = `
         PREFIX ckg: <http://ckg.de/default#>
-        INSERT DATA { <ckg:sub> <ckg:pred> <ckg:obj> }
+        INSERT DATA { ${triples} }
     `;
 
     await engine.queryVoid(query, {
@@ -44,5 +44,5 @@ async function write() {
     });
 }
 
-read().then(() => {});
+// read().then(() => {});
 // write().then(() => { process.exit(0); });

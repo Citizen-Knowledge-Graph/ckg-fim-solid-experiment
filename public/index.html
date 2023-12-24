@@ -69,7 +69,7 @@
 <div style="width: 500px">
     <shacl-form id="shacl-form" style="display: none"
                 data-submit-button="Add"
-                data-value-subject="ckg:citizen-a"> <!-- "http://ckg.de/default#citizen-a" -->
+                data-value-subject="http://ckg.de/default#citizen-a">
     </shacl-form>
 </div>
 
@@ -88,9 +88,19 @@
     const shaclForm = document.querySelector("shacl-form")
 
     shaclForm.addEventListener("submit", () => {
-        const triples = shaclForm.serialize() // N-Triples
+        const triples = shaclForm.serialize()
+        const triplesRaw = shaclForm.serialize("N-Triples")
         turtleViewer.setValue(triples);
         console.log(triples)
+
+        fetch(`${SERVER}/insertData`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ triples: triplesRaw })
+        })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch((error) => console.error('Error:', error));
     });
 
     document.getElementById('autocomplete').addEventListener('input', function() {
