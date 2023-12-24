@@ -1,5 +1,5 @@
-const QueryEngine = require('@comunica/query-sparql-solid').QueryEngine;
-const { interactiveLogin } = require('solid-node-interactive-auth');
+import { QueryEngine } from "@comunica/query-sparql-solid";
+import { interactiveLogin } from "solid-node-interactive-auth";
 
 const SERVER = "http://localhost:3000";
 const POD = "ckg-pod";
