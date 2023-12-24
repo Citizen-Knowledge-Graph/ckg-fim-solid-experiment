@@ -10,7 +10,7 @@ async function read() {
     const session = await interactiveLogin({ oidcIssuer: SERVER });
     console.log(session.info);
     const engine = new QueryEngine();
-    let query = `
+    let query = `x
         SELECT * WHERE { ?s ?p ?o } 
     `;
 

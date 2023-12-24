@@ -2,7 +2,7 @@ const semver = require("semver");
 const fs = require("fs");
 const fsp = require("fs").promises;
 
-const DIR = ".fim";
+const DIR = "../.fim";
 const SCHEMAS_1_FILE = DIR + "/schemas1.json";
 const SCHEMAS_2_FILE = DIR + "/schemas2.json";
 const JSON_SCHEMA_FILES_DIR = DIR + "/json-schema-files";
@@ -102,7 +102,11 @@ async function collectDataFieldConstraintsFromJsonSchemaFiles() {
 }
 
 function convertSelectedDataFieldsConstraintsToShaclShapes() {
-    // TODO
+    let selectedDataFields = [
+        "F00003175", // Wohnfläche in m2 v1.0
+        "F05011522", // Anzahl Kinder v1.0
+        ""
+    ];
 }
 
 // fetchAllSchemas().then(() => {});

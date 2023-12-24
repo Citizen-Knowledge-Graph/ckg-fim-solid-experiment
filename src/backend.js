@@ -5,9 +5,9 @@ const PORT = 3030;
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.static("public"));
 
 app.listen(PORT ,() => console.log("server is running at port " + PORT));
-app.get("/", (req, res) => res.send("root"));
 
 app.post("/dev", (req, res) => {
     console.log(req.body);
