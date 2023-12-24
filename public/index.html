@@ -39,6 +39,9 @@
     </style>
     <!-- https://github.com/ULB-Darmstadt/shacl-form -->
     <script src="/@ulb-darmstadt/shacl-form/dist/form-default.js" type="module"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/turtle/turtle.min.js"></script>
 </head>
 <body>
 <div style="padding: 20px">
@@ -70,13 +73,23 @@
     </shacl-form>
 </div>
 
+<br/>
+<textarea id="turtle-viewer"></textarea>
+
 <script>
     const SERVER = "http://localhost:3030";
+
+    const turtleViewer = CodeMirror.fromTextArea(document.getElementById("turtle-viewer"), {
+        lineNumbers: true,
+        readOnly: true,
+        mode: "turtle"
+    });
 
     const shaclForm = document.querySelector("shacl-form")
 
     shaclForm.addEventListener("submit", () => {
         const triples = shaclForm.serialize() // N-Triples
+        turtleViewer.setValue(triples);
         console.log(triples)
     });
 
