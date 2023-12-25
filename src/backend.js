@@ -17,19 +17,16 @@ app.post("/dev", (req, res) => {
 });
 
 app.post("/insertData", (req, res) => {
+    const fimDataField = req.body.fimDataField;
     const triples = req.body.triples;
-    console.log(triples);
 
     const input = Readable.from([triples])
     const output = formats.parsers.import('text/turtle', input)
     output.on('data', quad => {
         console.log(`quad: ${quad.subject.value} - ${quad.predicate.value} - ${quad.object.value}`)
     })
-    output.on('prefix', (prefix, ns) => {
-        console.log(`prefix: ${prefix} ${ns.value}`)
-    })
 
-    write(triples).then(() => {
-        res.send({ msg: "Stored in Solid" });
-    });
+    res.send({ turtle: "TODO" });
+
+    // write(triples).then(() => {});
 });

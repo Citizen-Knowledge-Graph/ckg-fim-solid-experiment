@@ -67,10 +67,7 @@
 </div>
 
 <div style="width: 500px">
-    <shacl-form id="shacl-form" style="display: none"
-                data-submit-button="Add"
-                data-value-subject="http://ckg.de/default#citizen-a">
-    </shacl-form>
+    <shacl-form id="shacl-form" style="display: none" data-submit-button="Add"></shacl-form>
 </div>
 
 <br/>
@@ -78,6 +75,8 @@
 
 <script>
     const SERVER = "http://localhost:3030";
+
+    let selectedFimDataField = {};
 
     const turtleViewer = CodeMirror.fromTextArea(document.getElementById("turtle-viewer"), {
         lineNumbers: true,
@@ -88,18 +87,18 @@
     const shaclForm = document.querySelector("shacl-form")
 
     shaclForm.addEventListener("submit", () => {
-        const triples = shaclForm.serialize()
-        const triplesRaw = shaclForm.serialize("N-Triples")
-        turtleViewer.setValue(triples);
-        console.log(triples)
+        const triples = shaclForm.serialize("N-Triples")
 
         fetch(`${SERVER}/insertData`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ triples: triplesRaw })
+            body: JSON.stringify({
+                fimDataField: selectedFimDataField,
+                triples: triples
+            })
         })
             .then(response => response.json())
-            .then(data => console.log(data))
+            .then(data => turtleViewer.setValue(data.turtle))
             .catch((error) => console.error('Error:', error));
     });
 
@@ -142,21 +141,31 @@
 
     document.getElementById("add-btn").addEventListener("click", function() {
         const shaclForm = document.querySelector("shacl-form");
+
+        selectedFimDataField = {
+            fimId: "F00003175",
+            instanceId: `ckg:F00003175_${randStr(4)}`,
+            fimVersion: "1.0",
+            fimLabel: "Wohnfläche in m2"
+        };
+
         let shaclShape = `
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix ckg: <http://ckg.de/default#> .
+@prefix fim: <https://test.schema-repository.fitko.dev/fields/baukasten/> .
 
-ckg:Citizen a sh:NodeShape ;
+fim:${selectedFimDataField.fimId} a sh:NodeShape ;
   sh:property [
     sh:datatype     xsd:integer ;
     sh:minInclusive 1 ;
     sh:maxInclusive 100 ;
     sh:maxCount     1 ;
     sh:name         'Age' ;
-    sh:path         ckg:hasAge ;
+    sh:path         ckg:hasValue ;
 ] .`;
         shaclForm.setAttribute("data-shapes", shaclShape);
+        shaclForm.setAttribute("data-value-subject", selectedFimDataField.instanceId);
         shaclForm.style.display = "block";
     });
 
@@ -170,6 +179,11 @@ ckg:Citizen a sh:NodeShape ;
             .then(data => console.log(data))
             .catch((error) => console.error('Error:', error));
     });
+
+    function randStr(length) {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        return Array.from({ length }, () => characters.charAt(Math.floor(Math.random() * characters.length))).join("");
+    }
 </script>
 
 </body>
