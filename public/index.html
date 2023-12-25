@@ -59,9 +59,6 @@
                 &nbsp;
                 <button id="add-btn">Add</button>
             </td>
-            <td>
-                <button id="dev-btn">Dev</button>
-            </td>
         </tr>
     </table>
 </div>
@@ -167,17 +164,6 @@ fim:${selectedFimDataField.fimId} a sh:NodeShape ;
         shaclForm.setAttribute("data-shapes", shaclShape);
         shaclForm.setAttribute("data-value-subject", selectedFimDataField.instanceId);
         shaclForm.style.display = "block";
-    });
-
-    document.getElementById("dev-btn").addEventListener("click", function() {
-        fetch(`${SERVER}/dev`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ key: "dev-value" })
-        })
-            .then(response => response.json())
-            .then(data => console.log(data))
-            .catch((error) => console.error('Error:', error));
     });
 
     function randStr(length) {

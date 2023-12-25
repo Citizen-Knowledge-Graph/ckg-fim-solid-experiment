@@ -11,11 +11,6 @@ app.use(express.static("node_modules"));
 
 app.listen(PORT ,() => console.log("server is running at port " + PORT));
 
-app.post("/dev", (req, res) => {
-    console.log(req.body);
-    res.send({ msg: "received" });
-});
-
 app.post("/insertData", (req, res) => {
     const fimDataField = req.body.fimDataField;
     const triples = req.body.triples;
