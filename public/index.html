@@ -73,7 +73,15 @@
 <script>
     const SERVER = "http://localhost:3030";
 
-    let selectedFimDataField = {};
+    const PREFIX = {
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "sh": "http://www.w3.org/ns/shacl#",
+        "fim": "https://test.schema-repository.fitko.dev/fields/baukasten",
+        "ckg": "http://ckg.de/default#"
+    }
+
+    let selected = {}; // selected FIM data field
 
     const turtleViewer = CodeMirror.fromTextArea(document.getElementById("turtle-viewer"), {
         lineNumbers: true,
@@ -84,15 +92,17 @@
     const shaclForm = document.querySelector("shacl-form")
 
     shaclForm.addEventListener("submit", () => {
-        const triples = shaclForm.serialize("N-Triples")
+        let triples = shaclForm.serialize("N-Triples")
+        triples += `
+            <${PREFIX.fim}/${selected.fimId}> <${PREFIX.rdfs}:label> "${selected.fimLabel}" .
+            <${PREFIX.fim}/${selected.fimId}> <${PREFIX.ckg}:hasFimVersion> "${selected.fimVersion}" .
+            <${PREFIX.ckg}/main-person> <${PREFIX.ckg}:hasFimDataFieldValue> <${selected.instanceId}> .
+        `;
 
         fetch(`${SERVER}/insertData`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                fimDataField: selectedFimDataField,
-                triples: triples
-            })
+            body: JSON.stringify({ triples: triples })
         })
             .then(response => response.json())
             .then(data => turtleViewer.setValue(data.turtle))
@@ -139,20 +149,20 @@
     document.getElementById("add-btn").addEventListener("click", function() {
         const shaclForm = document.querySelector("shacl-form");
 
-        selectedFimDataField = {
+        selected = {
             fimId: "F00003175",
-            instanceId: `ckg:F00003175_${randStr(4)}`,
+            instanceId: `${PREFIX.ckg}:F00003175_${randStr(4)}`,
             fimVersion: "1.0",
             fimLabel: "Wohnfläche in m2"
         };
 
         let shaclShape = `
-@prefix sh: <http://www.w3.org/ns/shacl#> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix ckg: <http://ckg.de/default#> .
-@prefix fim: <https://test.schema-repository.fitko.dev/fields/baukasten/> .
+@prefix sh: <${PREFIX.sh}> .
+@prefix xsd: <${PREFIX.xsd}> .
+@prefix ckg: <${PREFIX.ckg}> .
+@prefix fim: <${PREFIX.fim}> .
 
-fim:${selectedFimDataField.fimId} a sh:NodeShape ;
+fim:${selected.fimId} a sh:NodeShape ;
   sh:property [
     sh:datatype     xsd:integer ;
     sh:minInclusive 1 ;
@@ -162,7 +172,7 @@ fim:${selectedFimDataField.fimId} a sh:NodeShape ;
     sh:path         ckg:hasValue ;
 ] .`;
         shaclForm.setAttribute("data-shapes", shaclShape);
-        shaclForm.setAttribute("data-value-subject", selectedFimDataField.instanceId);
+        shaclForm.setAttribute("data-value-subject", selected.instanceId);
         shaclForm.style.display = "block";
     });
 

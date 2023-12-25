@@ -6,13 +6,16 @@ const POD = "ckg-pod";
 const PROFILE_NAME = "main-profile";
 const PROFILE_URL = `${SERVER}/${POD}/${PROFILE_NAME}`;
 
-async function read() {
-    const session = await interactiveLogin({ oidcIssuer: SERVER });
+let session;
+
+export async function auth() {
+    session = await interactiveLogin({ oidcIssuer: SERVER });
     console.log(session.info);
+}
+
+export async function read(callback) {
     const engine = new QueryEngine();
-    let query = `x
-        SELECT * WHERE { ?s ?p ?o } 
-    `;
+    let query = `SELECT * WHERE { ?s ?p ?o }`;
 
     const bindingsStream = await engine.queryBindings(query, {
         sources: [PROFILE_URL],
@@ -23,7 +26,7 @@ async function read() {
         console.log(binding.toString());
     });
     bindingsStream.on('end', () => {
-        process.exit(0);
+        callback("TODO");
     });
     bindingsStream.on('error', (error) => {
         console.error(error);
@@ -31,12 +34,8 @@ async function read() {
 }
 
 export async function write(triples) {
-    const session = await interactiveLogin({ oidcIssuer: SERVER });
     const engine = new QueryEngine();
-    let query = `
-        PREFIX ckg: <http://ckg.de/default#>
-        INSERT DATA { ${triples} }
-    `;
+    let query = `INSERT DATA { ${triples} }`;
 
     await engine.queryVoid(query, {
         sources: [PROFILE_URL],
