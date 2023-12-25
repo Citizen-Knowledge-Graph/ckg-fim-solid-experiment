@@ -92,8 +92,8 @@
     const shaclForm = document.querySelector("shacl-form")
 
     shaclForm.addEventListener("submit", () => {
-        let triples = shaclForm.serialize("N-Triples")
-        triples += `
+        let nTriples = shaclForm.serialize("N-Triples")
+        nTriples += `
             <${PREFIX.fim}/${selected.fimId}> <${PREFIX.rdfs}:label> "${selected.fimLabel}" .
             <${PREFIX.fim}/${selected.fimId}> <${PREFIX.ckg}:hasFimVersion> "${selected.fimVersion}" .
             <${PREFIX.ckg}/main-person> <${PREFIX.ckg}:hasFimDataFieldValue> <${selected.instanceId}> .
@@ -102,11 +102,11 @@
         fetch(`${SERVER}/insertData`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ triples: triples })
+            body: JSON.stringify({ nTriples: nTriples })
         })
             .then(response => response.json())
-            .then(data => turtleViewer.setValue(data.turtle))
-            .catch((error) => console.error('Error:', error));
+            .then(json => turtleViewer.setValue(json.turtle))
+            .catch(err => console.error(err));
     });
 
     document.getElementById('autocomplete').addEventListener('input', function() {
@@ -151,7 +151,7 @@
 
         selected = {
             fimId: "F00003175",
-            instanceId: `${PREFIX.ckg}:F00003175_${randStr(4)}`,
+            instanceId: `${PREFIX.ckg}F00003175_${randStr(4)}`,
             fimVersion: "1.0",
             fimLabel: "Wohnfläche in m2"
         };
