@@ -1,7 +1,9 @@
 import { QueryEngine } from "@comunica/query-sparql-solid";
 import { interactiveLogin } from "solid-node-interactive-auth";
 import rdf from "rdf-ext";
+import decode from "stream-chunks/decode.js";
 import Serializer from "@rdfjs/serializer-turtle";
+import { prefixifyTurtle } from "./util.js";
 
 const SERVER = "http://localhost:3000";
 const POD = "ckg-pod";
@@ -30,14 +32,11 @@ export async function read(callback) {
         quads.push(rdf.quad(binding.get("s"), binding.get("p"), binding.get("o")));
     });
     bindingsStream.on('end', () => {
-        const dataset = rdf.dataset(quads)
         const serializer = new Serializer();
-        // add prefixes TODO
-        const input = dataset.toStream()
-        const output = serializer.import(input)
-        output.pipe(process.stdout)
-        // let turtle = ? TODO
-        callback("TODO");
+        const output = serializer.import(rdf.dataset(quads).toStream());
+        decode(output).then(turtle => {
+            callback(prefixifyTurtle(turtle));
+        });
     });
     bindingsStream.on('error', err => console.error(err));
 }
