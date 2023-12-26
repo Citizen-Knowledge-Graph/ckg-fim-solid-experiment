@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add a FIM data field</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .autocomplete-container {
+            position: relative;
+            width: 400px;
+        }
+        #autocomplete {
+            width: 100%;
+        }
+        #autocomplete-list {
+            position: absolute;
+            border: 1px solid #d4d4d4;
+            border-bottom: none;
+            border-top: none;
+            z-index: 99;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: #fff;
+        }
+        .autocomplete-items {
+            padding: 10px;
+            cursor: pointer;
+            background-color: #fff;
+            border-bottom: 1px solid #d4d4d4;
+            font-size: 14px;
+        }
+        .autocomplete-items:hover {
+            background-color: #7DF9FF;
+        }
+    </style>
+    <!-- https://github.com/ULB-Darmstadt/shacl-form -->
+    <script src="/@ulb-darmstadt/shacl-form/dist/form-default.js" type="module"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/turtle/turtle.min.js"></script>
+</head>
+<body>
+<div style="padding: 20px">
+    Add a data point to your profile:
+    <br><br>
+    <table>
+        <tr>
+            <td>
+                <div class="autocomplete-container">
+                    <input id="autocomplete" type="text" placeholder="FIM data field">
+                    <div id="autocomplete-list"></div>
+                </div>
+            </td>
+            <td>
+                &nbsp;
+                <button id="add-btn">Add</button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div style="width: 500px">
+    <shacl-form id="shacl-form" style="display: none" data-submit-button="Add"></shacl-form>
+</div>
+
+<br/>
+<textarea id="turtle-viewer"></textarea>
+
+<script>
+    const SERVER = "http://localhost:3030";
+
+    const PREFIX = {
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "sh": "http://www.w3.org/ns/shacl#",
+        "fim": "https://test.schema-repository.fitko.dev/fields/baukasten",
+        "ckg": "http://ckg.de/default#"
+    }
+
+    let selected = {}; // selected FIM data field
+
+    const turtleViewer = CodeMirror.fromTextArea(document.getElementById("turtle-viewer"), {
+        lineNumbers: true,
+        readOnly: true,
+        mode: "turtle"
+    });
+
+    const shaclForm = document.querySelector("shacl-form")
+
+    shaclForm.addEventListener("submit", () => {
+        let nTriples = shaclForm.serialize("N-Triples")
+        nTriples += `
+            <${PREFIX.fim}/${selected.fimId}> <${PREFIX.rdfs}:label> "${selected.fimLabel}" .
+            <${PREFIX.fim}/${selected.fimId}> <${PREFIX.ckg}:hasFimVersion> "${selected.fimVersion}" .
+            <${PREFIX.ckg}/main-person> <${PREFIX.ckg}:hasFimDataFieldValue> <${selected.instanceId}> .
+        `;
+
+        fetch(`${SERVER}/insertData`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ nTriples: nTriples })
+        })
+            .then(response => response.json())
+            .then(json => turtleViewer.setValue(json.turtle))
+            .catch(err => console.error(err));
+    });
+
+    document.getElementById('autocomplete').addEventListener('input', function() {
+        let inputVal = this.value;
+        let autocompleteList = document.getElementById('autocomplete-list');
+        autocompleteList.innerHTML = '';
+        if (!inputVal) return;
+
+        fetch(`https://test.schema-repository.fitko.dev/api/v0/fields?name=${inputVal}&offset=0&limit=10&show_all=false`, {
+            method: 'GET',
+            headers: { 'accept': 'application/json' }
+        })
+            .then(response => response.json())
+            .then(data => {
+                let filteredItems = filterItemsWithHighestVersion(data.items);
+
+                for (let item of filteredItems) {
+                    let div = document.createElement('div');
+                    div.innerHTML = `${item.name} (id: ${item.fim_id}, fim: ${item.fim_version}, xdf: ${item.xdf_version})`;
+                    div.className = 'autocomplete-items';
+                    div.addEventListener('click', function() {
+                        document.getElementById('autocomplete').value = item.name;
+                        autocompleteList.innerHTML = '';
+                    });
+                    autocompleteList.appendChild(div);
+                }
+            });
+    });
+
+    function filterItemsWithHighestVersion(items) {
+        let groupedItems = {};
+        for (let item of items) {
+            if (!groupedItems[item.fim_id] || groupedItems[item.fim_id].fim_version < item.fim_version) {
+                groupedItems[item.fim_id] = item;
+            }
+        }
+        return Object.values(groupedItems);
+    }
+
+    document.getElementById("add-btn").addEventListener("click", function() {
+        const shaclForm = document.querySelector("shacl-form");
+
+        selected = {
+            fimId: "F00003175",
+            instanceId: `${PREFIX.ckg}F00003175_${randStr(4)}`,
+            fimVersion: "1.0",
+            fimLabel: "Wohnfläche in m2"
+        };
+
+        let shaclShape = `
+@prefix sh: <${PREFIX.sh}> .
+@prefix xsd: <${PREFIX.xsd}> .
+@prefix ckg: <${PREFIX.ckg}> .
+@prefix fim: <${PREFIX.fim}> .
+
+fim:${selected.fimId} a sh:NodeShape ;
+  sh:property [
+    sh:datatype     xsd:integer ;
+    sh:minInclusive 1 ;
+    sh:maxInclusive 100 ;
+    sh:maxCount     1 ;
+    sh:name         'Age' ;
+    sh:path         ckg:hasValue ;
+] .`;
+        shaclForm.setAttribute("data-shapes", shaclShape);
+        shaclForm.setAttribute("data-value-subject", selected.instanceId);
+        shaclForm.style.display = "block";
+    });
+
+    function randStr(length) {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        return Array.from({ length }, () => characters.charAt(Math.floor(Math.random() * characters.length))).join("");
+    }
+</script>
+
+</body>
+</html>
