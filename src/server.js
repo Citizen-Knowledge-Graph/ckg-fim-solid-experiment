@@ -1,8 +1,7 @@
 import express from "express";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
 import { auth, write, read } from "./solid.js";
+import { validateAll } from "./validation.js";
+import { datasetToTurtle } from "./util.js";
 
 const PORT = 3030;
 const app = express();
@@ -15,18 +14,16 @@ app.listen(PORT ,() => console.log("server is running at port " + PORT));
 app.post("/insertData", async (req, res) => {
     await auth();
     await write(req.body.nTriples);
-    await read(turtle => {
-        res.send({ turtle: turtle });
+    await read(async dataset => {
+        res.send({ turtle: await datasetToTurtle(dataset) });
     });
 });
 
 app.get("/runChecks", async (req, res) => {
-    const dir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "db", "shacl");
-    fs.readdir(dir, (err, files) => {
-        if (err) return console.error(err);
-        for (const file of files) {
-            console.log(file);
-        }
+    await auth();
+    await read(dataProfile => {
+        validateAll().then(results => {
+            res.send({ results: results })
+        });
     });
-    res.send({ results: [] })
 });

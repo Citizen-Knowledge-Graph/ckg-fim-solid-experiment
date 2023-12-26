@@ -8,7 +8,9 @@
     "@ulb-darmstadt/shacl-form": "^1.3.3",
     "express": "^4.18.2",
     "rdf-ext": "^2.5.1",
+    "rdf-utils-fs": "^3.0.0",
     "semver": "^7.5.4",
+    "shacl-engine": "^0.1.1",
     "solid-node-interactive-auth": "^1.1.1",
     "stream-chunks": "^1.0.0"
   },

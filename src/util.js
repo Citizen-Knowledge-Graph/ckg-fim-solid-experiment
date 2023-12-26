@@ -1,3 +1,5 @@
+import decode from "stream-chunks/decode.js";
+import Serializer from "@rdfjs/serializer-turtle";
 
 const PREFIX = {
     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
@@ -6,7 +8,15 @@ const PREFIX = {
     "ckg": "http://ckg.de/default#"
 };
 
-export function prefixifyTurtle(turtle) {
+export function datasetToTurtle(dataset) {
+    const serializer = new Serializer();
+    const output = serializer.import(dataset.toStream());
+    return decode(output).then(turtle => {
+        return prefixifyTurtle(turtle);
+    });
+}
+
+function prefixifyTurtle(turtle) {
     let prefixesPart = "";
     for (const [key, value] of Object.entries(PREFIX)) {
         prefixesPart += `@prefix ${key}: <${value}> .\n`;
