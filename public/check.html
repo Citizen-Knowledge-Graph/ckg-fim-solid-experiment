@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Run checks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div style="padding: 20px">
+        <button id="check-btn">Run checks</button>
+    </div>
+    <script>
+        const SERVER = "http://localhost:3030";
+
+        document.getElementById("check-btn").addEventListener("click", () => {
+            fetch(`${SERVER}/runChecks`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                });
+        });
+    </script>
+</body>
+</html>

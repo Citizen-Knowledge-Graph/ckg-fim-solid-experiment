@@ -16,3 +16,7 @@ app.post("/insertData", async (req, res) => {
         res.send({ turtle: turtle });
     });
 });
+
+app.get("/runChecks", async (req, res) => {
+    res.send({ results: [] })
+});
