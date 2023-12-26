@@ -12,6 +12,8 @@
 <body>
     <div style="padding: 20px">
         <button id="check-btn">Run checks</button>
+        <br/><br/>
+        <div id="result-container"></div>
     </div>
     <script>
         const SERVER = "http://localhost:3030";
@@ -19,8 +21,24 @@
         document.getElementById("check-btn").addEventListener("click", () => {
             fetch(`${SERVER}/runChecks`)
                 .then(response => response.json())
-                .then(data => {
-                    console.log(data)
+                .then(json => {
+                    let summary = json.summary;
+                    let resultContainer = document.getElementById("result-container");
+                    for (let key in summary) {
+                        let resultCategory = summary[key];
+                        let requirementProfiles = resultCategory.arr;
+                        if (requirementProfiles.length === 0) continue;
+                        let headline = document.createElement("h3");
+                        headline.textContent = resultCategory.label;
+                        resultContainer.appendChild(headline);
+                        let list = document.createElement("ul");
+                        requirementProfiles.forEach(item => {
+                            let li = document.createElement("li");
+                            li.textContent = item;
+                            list.appendChild(li);
+                        });
+                        resultContainer.appendChild(list);
+                    }
                 });
         });
     </script>

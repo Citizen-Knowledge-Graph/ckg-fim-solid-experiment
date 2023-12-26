@@ -21,9 +21,9 @@ app.post("/insertData", async (req, res) => {
 
 app.get("/runChecks", async (req, res) => {
     await auth();
-    await read(dataProfile => {
-        validateAll().then(results => {
-            res.send({ results: results })
-        });
+    await read(dataset => {
+        validateAll(dataset, summary =>
+            res.send({ summary: summary })
+        );
     });
 });

@@ -11,7 +11,7 @@ let session;
 
 export async function auth() {
     session = await interactiveLogin({ oidcIssuer: SERVER });
-    console.log(session.info);
+    // console.log(session.info);
 }
 
 export async function read(callback) {

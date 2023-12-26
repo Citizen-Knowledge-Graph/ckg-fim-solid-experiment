@@ -9,6 +9,6 @@ ckg:HouseEligibleForSolarFundingShape
     sh:property [
           sh:path ckg:hasValue ;
           sh:datatype xsd:integer ;
-          sh:minInclusive 50 ;
+          sh:minInclusive 20 ;
           sh:minCount 1 ;
       ] .
