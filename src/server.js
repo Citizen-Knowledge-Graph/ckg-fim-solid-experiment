@@ -1,5 +1,5 @@
 import express from "express";
-import { auth, write, read } from "./solid.js";
+import { solidAuth, solidWrite, solidRead } from "./solid.js";
 import { validateAll } from "./validation.js";
 import { datasetToTurtle } from "./util.js";
 
@@ -12,16 +12,16 @@ app.use(express.static("node_modules"));
 app.listen(PORT ,() => console.log("server is running at port " + PORT));
 
 app.post("/insertData", async (req, res) => {
-    await auth();
-    await write(req.body.nTriples);
-    await read(async dataset => {
+    await solidAuth();
+    await solidWrite(req.body.nTriples);
+    await solidRead(async dataset => {
         res.send({ turtle: await datasetToTurtle(dataset) });
     });
 });
 
 app.get("/runChecks", async (req, res) => {
-    await auth();
-    await read(dataset => {
+    await solidAuth();
+    await solidRead(dataset => {
         validateAll(dataset, summary =>
             res.send({ summary: summary })
         );

@@ -9,22 +9,20 @@ const PROFILE_URL = `${SERVER}/${POD}/${PROFILE_NAME}`;
 
 let session;
 
-export async function auth() {
+export async function solidAuth() {
     session = await interactiveLogin({ oidcIssuer: SERVER });
     // console.log(session.info);
 }
 
-export async function read(callback) {
+export async function solidRead(callback) {
     const engine = new QueryEngine();
     let query = `SELECT * WHERE { ?s ?p ?o }`;
+    let quads = [];
 
     const bindingsStream = await engine.queryBindings(query, {
         sources: [PROFILE_URL],
         '@comunica/actor-http-inrupt-solid-client-authn:session': session,
     });
-
-    let quads = [];
-
     bindingsStream.on('data', (binding) => {
         quads.push(rdf.quad(binding.get("s"), binding.get("p"), binding.get("o")));
     });
@@ -34,7 +32,7 @@ export async function read(callback) {
     bindingsStream.on('error', err => console.error(err));
 }
 
-export async function write(triples) {
+export async function solidWrite(triples) {
     const engine = new QueryEngine();
     let query = `INSERT DATA { ${triples} }`;
 
@@ -43,6 +41,3 @@ export async function write(triples) {
         '@comunica/actor-http-inrupt-solid-client-authn:session': session,
     });
 }
-
-// read().then(() => {});
-// write().then(() => { process.exit(0); });
