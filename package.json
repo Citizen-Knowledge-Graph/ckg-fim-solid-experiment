@@ -1,7 +1,7 @@
 {
   "type": "module",
   "scripts": {
-    "start": "nodemon src/backend.js"
+    "start": "nodemon src/server.js"
   },
   "dependencies": {
     "@comunica/query-sparql-solid": "^2.4.0",
