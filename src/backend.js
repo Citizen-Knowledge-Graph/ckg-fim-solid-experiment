@@ -1,4 +1,7 @@
 import express from "express";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import { auth, write, read } from "./solid.js";
 
 const PORT = 3030;
@@ -18,5 +21,12 @@ app.post("/insertData", async (req, res) => {
 });
 
 app.get("/runChecks", async (req, res) => {
+    const dir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "db", "shacl");
+    fs.readdir(dir, (err, files) => {
+        if (err) return console.error(err);
+        for (const file of files) {
+            console.log(file);
+        }
+    });
     res.send({ results: [] })
 });

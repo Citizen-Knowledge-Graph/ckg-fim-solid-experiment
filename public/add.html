@@ -76,7 +76,7 @@
         "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
         "xsd": "http://www.w3.org/2001/XMLSchema#",
         "sh": "http://www.w3.org/ns/shacl#",
-        "fim": "https://test.schema-repository.fitko.dev/fields/baukasten",
+        "fim": "https://test.schema-repository.fitko.dev/fields/baukasten/",
         "ckg": "http://ckg.de/default#"
     }
 
@@ -93,9 +93,9 @@
     shaclForm.addEventListener("submit", () => {
         let nTriples = shaclForm.serialize("N-Triples")
         nTriples += `
-            <${PREFIX.fim}/${selected.fimId}> <${PREFIX.rdfs}:label> "${selected.fimLabel}" .
-            <${PREFIX.fim}/${selected.fimId}> <${PREFIX.ckg}:hasFimVersion> "${selected.fimVersion}" .
-            <${PREFIX.ckg}/main-person> <${PREFIX.ckg}:hasFimDataFieldValue> <${selected.instanceId}> .
+            <${PREFIX.fim}${selected.fimId}> <${PREFIX.rdfs}label> "${selected.fimLabel}" .
+            <${PREFIX.fim}${selected.fimId}> <${PREFIX.ckg}hasFimVersion> "${selected.fimVersion}" .
+            <${PREFIX.ckg}main-person> <${PREFIX.ckg}hasFimDataFieldValue> <${selected.instanceId}> .
         `;
 
         fetch(`${SERVER}/insertData`, {
@@ -152,7 +152,7 @@
             fimId: "F00003175",
             instanceId: `${PREFIX.ckg}F00003175_${randStr(4)}`,
             fimVersion: "1.0",
-            fimLabel: "Wohnfläche in m2"
+            fimLabel: "Wohnfläche"
         };
 
         let shaclShape = `
@@ -167,7 +167,7 @@ fim:${selected.fimId} a sh:NodeShape ;
     sh:minInclusive 1 ;
     sh:maxInclusive 100 ;
     sh:maxCount     1 ;
-    sh:name         'Age' ;
+    sh:name         '${selected.fimLabel}' ;
     sh:path         ckg:hasValue ;
 ] .`;
         shaclForm.setAttribute("data-shapes", shaclShape);
