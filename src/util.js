@@ -9,6 +9,8 @@ const PREFIX = {
 };
 
 export function datasetToTurtle(dataset) {
+    // import prettyFormats from "@rdfjs/formats/pretty.js"; <-- try this approach TODO
+    // rdf.formats.import(prettyFormats);
     const serializer = new Serializer();
     const output = serializer.import(dataset.toStream());
     return decode(output).then(turtle => {
