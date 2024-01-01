@@ -126,10 +126,19 @@
                 let filteredItems = filterItemsWithHighestVersion(data.items);
 
                 for (let item of filteredItems) {
+                    const shaclShapeExists = dataFieldsShaclShapes[`${item.fim_id}/${item.fim_version}`];
+
                     let div = document.createElement('div');
                     div.innerHTML = `${item.name} (id: ${item.fim_id}, fim: ${item.fim_version}, xdf: ${item.xdf_version})`;
                     div.className = 'autocomplete-items';
+                    if (shaclShapeExists) {
+                        div.style.backgroundColor = 'LightGoldenRodYellow';
+                    }
                     div.addEventListener('click', function() {
+                        if (!shaclShapeExists) {
+                            alert("No SHACL shape found for this FIM data field");
+                            return;
+                        }
                         document.getElementById('autocomplete').value = item.name;
                         autocompleteList.innerHTML = '';
                     });
