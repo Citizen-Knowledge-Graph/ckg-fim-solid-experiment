@@ -7,6 +7,7 @@ const SCHEMAS_1_FILE = DIR + "/schemas1.json";
 const SCHEMAS_2_FILE = DIR + "/schemas2.json";
 const JSON_SCHEMA_FILES_DIR = DIR + "/json-schema-files";
 const DATA_FIELDS_CONSTRAINTS_FILE = DIR + "/data-fields-constraints.json";
+const SHACL_SHAPES_FILE = DIR + "/data-fields-shacl-shapes.json";
 
 function expandVersionStr(versionStr) {
     return versionStr.split(".").length < 3 ? versionStr + ".0" : versionStr;
@@ -104,16 +105,61 @@ async function collectDataFieldConstraintsFromJsonSchemaFiles() {
     fs.writeFile(DATA_FIELDS_CONSTRAINTS_FILE, JSON.stringify(map, null, 2), "utf8", () => {});
 }
 
-function convertSelectedDataFieldsConstraintsToShaclShapes() {
+function createShaclShapesForSelectedDataFields() {
     let selectedDataFields = [
-        "F00003175", // Wohnfläche in m2 v1.0
-        "F05011522", // Anzahl Kinder v1.0
-        ""
+        "F00003175", // Wohnfläche in m2, v1.0
+        "F03005642", // Grundfläche in m2, v1.0
+        "F05011522", // Anzahl Kinder, v1.0
+        "F00000575", // Höhe der Einnahmen (Brutto), v1.4
+        "F03010085", // Wohnort, v1.0
+        "F00000936", // Alter, v1.0
+        "F00000240", // Höhe der Miete, v1.5
     ];
+    fs.readFile(DATA_FIELDS_CONSTRAINTS_FILE, "utf8", async (err, data) => {
+        let constraintsMap = JSON.parse(data);
+        let shaclShapesMap = {};
+        for (let fimId of selectedDataFields) {
+            let entry = constraintsMap[fimId];
+            let key = `${fimId}/${entry.version}`;
+
+            // TODO: the conversion needs to be (much) more sophisticated than just string or not
+
+            let shaclShape = `
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ckg: <http://ckg.de/default#> .
+@prefix fim: <https://test.schema-repository.fitko.dev/fields/baukasten/> .
+
+fim:${fimId} a sh:NodeShape ;
+    sh:property [`;
+
+            if (entry.constraints.type === "string") {
+                shaclShape += `
+        sh:datatype     xsd:string ;
+        sh:minLength    1 ;`;
+            } else {
+                shaclShape += `
+        sh:datatype     xsd:integer ;
+        sh:minInclusive 1 ;`;
+            }
+            shaclShape += `
+        sh:maxCount     1 ;
+        sh:name         '${entry.constraints.title}' ;
+        sh:path         ckg:hasValue ;
+    ] .`;
+
+            shaclShapesMap[key] = {
+                fimId: fimId,
+                version: entry.version,
+                shape: shaclShape
+            };
+        }
+        fs.writeFile(SHACL_SHAPES_FILE, JSON.stringify(shaclShapesMap, null, 2), "utf8", () => {});
+    });
 }
 
 // fetchAllSchemas().then(() => {});
 // extractJsonFromSchemas().then(() => {});
 // downloadJsonSchemaFiles().then(() => {});
 // collectDataFieldConstraintsFromJsonSchemaFiles().then(() => {});
-convertSelectedDataFieldsConstraintsToShaclShapes().then(() => {});
+createShaclShapesForSelectedDataFields();
