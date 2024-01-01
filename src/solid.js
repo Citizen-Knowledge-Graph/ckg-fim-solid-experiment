@@ -16,6 +16,7 @@ export async function solidAuth() {
 
 export async function solidRead(callback) {
     const engine = new QueryEngine();
+    await engine.invalidateHttpCache();
     let query = `SELECT * WHERE { ?s ?p ?o }`;
     let quads = [];
 
