@@ -151,7 +151,7 @@ fim:${fimId} a sh:NodeShape ;
 
             shaclShapesMap[key] = {
                 fimId: fimId,
-                version: entry.version,
+                fimVersion: entry.version,
                 shape: shaclShape
             };
         }
