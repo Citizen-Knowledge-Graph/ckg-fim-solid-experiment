@@ -36,6 +36,7 @@
             background-color: #7DF9FF;
         }
     </style>
+    <script src="/data-fields-shacl-shapes.js"></script>
     <!-- https://github.com/ULB-Darmstadt/shacl-form -->
     <script src="/@ulb-darmstadt/shacl-form/dist/form-default.js" type="module"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
@@ -70,6 +71,8 @@
 <textarea id="turtle-viewer"></textarea>
 
 <script>
+    console.log("FIM data fields SHACL shapes:", dataFieldsShaclShapes)
+
     const SERVER = "http://localhost:3030";
 
     const PREFIX = {
