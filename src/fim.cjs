@@ -108,13 +108,14 @@ async function collectDataFieldConstraintsFromJsonSchemaFiles() {
 
 function createShaclShapesForSelectedDataFields() {
     let selectedDataFields = [
-        "F00003175", // Wohnfläche in m2, v1.0
+        "F00003175", // Wohnfläche in m2, v1.0  --> Demo: 80
+        "F03010085", // Wohnort, v1.0           --> Demo: Berlin
+        "F00000240", // Höhe der Miete, v1.5    --> Demo: 1200
+
         "F03005642", // Grundfläche in m2, v1.0
-        "F05011522", // Anzahl Kinder, v1.0
-        "F00000575", // Höhe der Einnahmen (Brutto), v1.4
-        "F03010085", // Wohnort, v1.0
         "F00000936", // Alter, v1.0
-        "F00000240", // Höhe der Miete, v1.5
+        "F00000575", // Höhe der Einnahmen (Brutto), v1.4
+        "F05011522", // Anzahl Kinder, v1.0
     ];
     fs.readFile(DATA_FIELDS_CONSTRAINTS_FILE, "utf8", async (err, data) => {
         let constraintsMap = JSON.parse(data);

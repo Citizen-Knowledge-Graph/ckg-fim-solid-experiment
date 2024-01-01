@@ -3,12 +3,22 @@
 @prefix ckg: <http://ckg.de/default#> .
 @prefix fim: <https://test.schema-repository.fitko.dev/fields/baukasten/> .
 
-ckg:HouseEligibleForSolarFundingShape
+ckg:WohnflaecheOk
     a sh:NodeShape ;
     sh:targetClass fim:F00003175 ;
     sh:property [
           sh:path ckg:hasValue ;
           sh:datatype xsd:integer ;
-          sh:minInclusive 20 ;
+          sh:maxInclusive 60 ;
+          sh:minCount 1 ;
+      ] .
+
+ckg:MieteOk
+    a sh:NodeShape ;
+    sh:targetClass fim:F00000240 ;
+    sh:property [
+          sh:path ckg:hasValue ;
+          sh:datatype xsd:integer ;
+          sh:minInclusive 800 ;
           sh:minCount 1 ;
       ] .
