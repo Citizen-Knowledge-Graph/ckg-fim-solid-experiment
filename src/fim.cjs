@@ -18,18 +18,21 @@ async function fetchAllSchemas() {
     const response = await fetch("https://test.schema-repository.fitko.dev/api/v0/schemas?show_all=true");
     const json = await response.json();
     const map = {}; // id to latest version
+    let count = 0;
     for (let schema of json.items) {
         const id = schema.fim_id;
         let version = schema.fim_version;
         if (map.hasOwnProperty(id)) {
             // store only the lastest FIM version
             if (semver.gt(expandVersionStr(version), expandVersionStr(map[id]))) {
+                count ++;
                 map[id] = version;
             }
         } else {
             map[id] = version;
         }
     }
+    console.log("Overwritten entries because of newer schema versions:", count)
     await fs.mkdir(DIR, () => {});
     fs.writeFile(SCHEMAS_1_FILE, JSON.stringify(map, null, 2), "utf8", () => {});
 }
