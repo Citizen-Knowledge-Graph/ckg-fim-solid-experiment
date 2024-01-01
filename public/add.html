@@ -96,7 +96,7 @@
     shaclForm.addEventListener("submit", () => {
         let nTriples = shaclForm.serialize("N-Triples")
         nTriples += `
-            <${PREFIX.fim}${selected.fimId}> <${PREFIX.rdfs}label> "${selected.fimLabel}" .
+            <${PREFIX.fim}${selected.fimId}> <${PREFIX.rdfs}label> "${selected.label}" .
             <${PREFIX.fim}${selected.fimId}> <${PREFIX.ckg}hasFimVersion> "${selected.fimVersion}" .
             <${PREFIX.ckg}main-person> <${PREFIX.ckg}hasFimDataFieldValue> <${selected.instanceId}> .
         `;
@@ -146,6 +146,7 @@
                         document.getElementById('autocomplete').value = item.name;
                         autocompleteList.innerHTML = '';
                         selected = dataFieldDetails;
+                        selected.label = item.name;
                         console.log("Selected FIM data field:", selected);
                     });
                     autocompleteList.appendChild(div);
