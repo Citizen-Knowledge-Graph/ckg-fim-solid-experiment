@@ -109,7 +109,7 @@ async function collectDataFieldConstraintsFromJsonSchemaFiles() {
 function createShaclShapesForSelectedDataFields() {
     let selectedDataFields = [
         "F00003175", // Wohnfläche in m2, v1.0  --> Demo: 80
-        "F03010085", // Wohnort, v1.0           --> Demo: Berlin
+        "F03010085", // Wohnort, v1.0           --> Demo: Berlin // F03003228, Aktueller Wohnsitz v1.0
         "F00000240", // Höhe der Miete, v1.5    --> Demo: 1200
 
         "F03005642", // Grundfläche in m2, v1.0

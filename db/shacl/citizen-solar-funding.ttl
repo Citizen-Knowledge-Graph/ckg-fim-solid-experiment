@@ -13,9 +13,19 @@ ckg:WohnflaecheOk
           sh:minCount 1 ;
       ] .
 
-ckg:WohnortOk
+# This is a workaround to showcase inference in the demo, we need a better strategy
+ckg:EnsureWohnsitzFieldIsUsed
     a sh:NodeShape ;
-    sh:targetClass fim:F03010085 ;
+    sh:targetNode ckg:FimDataField ;
+    sh:property [
+          sh:path ckg:used ;
+          sh:hasValue fim:F03003228 ;
+          sh:minCount 1 ;
+      ] .
+
+ckg:WohnsitzOk
+    a sh:NodeShape ;
+    sh:targetClass fim:F03003228 ;
     sh:property [
           sh:path ckg:hasValue ;
           sh:datatype xsd:string ;

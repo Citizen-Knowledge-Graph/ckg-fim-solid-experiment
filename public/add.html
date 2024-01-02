@@ -86,6 +86,7 @@
     shaclForm.addEventListener("submit", () => {
         let nTriples = shaclForm.serialize("N-Triples")
         nTriples += `
+            <${PREFIX.ckg}FimDataField> <${PREFIX.ckg}used> <${PREFIX.fim}${selected.fimId}> .
             <${PREFIX.fim}${selected.fimId}> <${PREFIX.rdfs}label> "${selected.label}" .
             <${PREFIX.fim}${selected.fimId}> <${PREFIX.ckg}hasFimVersion> "${selected.fimVersion}" .
             <${PREFIX.ckg}main-person> <${PREFIX.ckg}hasFimDataFieldValue> <${selected.instanceId}> .
