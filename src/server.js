@@ -14,7 +14,7 @@ app.listen(PORT ,() => console.log("server is running at port " + PORT));
 app.post("/insertData", async (req, res) => {
     await solidAuth();
     await solidWrite(req.body.nTriples);
-    console.log("Inserting: " + req.body.nTriples);
+    // console.log("Inserting: " + req.body.nTriples);
     res.send({});
 });
 

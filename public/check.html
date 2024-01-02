@@ -29,6 +29,7 @@
                 .then(json => {
                     let summary = json.summary;
                     let resultContainer = document.getElementById("result-container");
+                    resultContainer.innerHTML = "";
                     for (let key in summary) {
                         let resultCategory = summary[key];
                         let requirementProfiles = resultCategory.arr;
