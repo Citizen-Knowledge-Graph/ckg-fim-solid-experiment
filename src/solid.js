@@ -10,8 +10,13 @@ const PROFILE_URL = `${SERVER}/${POD}/${PROFILE_NAME}`;
 let session;
 
 export async function solidAuth() {
-    session = await interactiveLogin({ oidcIssuer: SERVER });
-    // console.log(session.info);
+    if (session && session.info.isLoggedIn) return;
+    try {
+        session = await interactiveLogin({ oidcIssuer: SERVER });
+        console.log("Logged into Solid");
+    } catch (err) {
+        console.error("Solid-Login failed:", err);
+    }
 }
 
 export async function solidRead(callback) {
