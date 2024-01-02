@@ -24,6 +24,7 @@ export async function solidRead(callback) {
         sources: [PROFILE_URL],
         '@comunica/actor-http-inrupt-solid-client-authn:session': session,
     });
+    // let bindings = await bindingsStream.toArray(); TODO ?
     bindingsStream.on('data', (binding) => {
         quads.push(rdf.quad(binding.get("s"), binding.get("p"), binding.get("o")));
     });

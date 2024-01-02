@@ -26,9 +26,10 @@ app.get("/viewData", async (req, res) => {
 });
 
 app.get("/runChecks", async (req, res) => {
+    const useInference = req.query.useInference === "true";
     await solidAuth();
     await solidRead(dataset => {
-        validateAll(dataset, summary =>
+        validateAll(dataset, useInference, summary =>
             res.send({ summary: summary })
         );
     });

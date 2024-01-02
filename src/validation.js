@@ -6,7 +6,7 @@ import rdf from "rdf-ext";
 import rdfDataModel from "@rdfjs/data-model";
 import Validator from "shacl-engine/Validator.js";
 
-export function validateAll(userProfileDataset, callback) {
+export function validateAll(userProfileDataset, useInference, callback) {
     const dir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "db", "shacl");
 
     let summary = {

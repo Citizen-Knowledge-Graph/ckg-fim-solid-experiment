@@ -12,6 +12,10 @@
 <body>
     <div style="padding: 20px">
         <button id="check-btn">Run checks</button>
+        &nbsp;&nbsp;
+        <label>
+            <input type="checkbox" id="use-inference-toggle" /><small>Use inference</small>
+        </label>
         <br/><br/>
         <div id="result-container"></div>
     </div>
@@ -19,7 +23,8 @@
         const SERVER = "http://localhost:3030";
 
         document.getElementById("check-btn").addEventListener("click", () => {
-            fetch(`${SERVER}/runChecks`)
+            const useInference = document.getElementById("use-inference-toggle").checked;
+            fetch(`${SERVER}/runChecks?useInference=${useInference}`)
                 .then(response => response.json())
                 .then(json => {
                     let summary = json.summary;
