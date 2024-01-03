@@ -9,49 +9,13 @@ import { Store } from "n3";
 import { QueryEngine } from "@comunica/query-sparql-rdfjs";
 import { QueryEngine as QueryEngineFile } from "@comunica/query-sparql-file";
 
+const DB_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "db");
+const SHACL_DIR = `${DB_DIR}/shacl`;
+const INFERENCE_FILE = `${DB_DIR}/inference.ttl`;
+
 export async function validateAll(userProfileDataset, useInference, callback) {
-    const db = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "db");
-    const shaclDir = `${db}/shacl`;
-
     if (useInference) {
-        let store = new Store();
-        store.import(userProfileDataset.toStream());
-        let sameAsPairs = [];
-
-        const queryEngineFile = new QueryEngineFile();
-        let query = `
-            PREFIX owl: <http://www.w3.org/2002/07/owl#>
-            SELECT * WHERE {
-                ?s owl:sameAs ?o .
-            }`;
-        const bindingsStream = await queryEngineFile.queryBindings(query, {
-            sources: [{ type: "file", value: db + "/inference.ttl" }],
-        });
-        let bindings = await bindingsStream.toArray();
-        for (let binding of bindings) {
-            sameAsPairs.push([binding.get("s").value, binding.get("o").value]);
-        }
-
-        const queryEngine = new QueryEngine();
-        for (let pair of sameAsPairs) {
-            let from = pair[0];
-            let to = pair[1];
-            query = `
-                PREFIX ckg: <http://ckg.de/default#>
-                PREFIX fim: <https://test.schema-repository.fitko.dev/fields/baukasten/>
-                CONSTRUCT {
-                    ckg:FimDataField ckg:used <${to}> .
-                    ?dataFieldInstance a <${to}> .
-                } WHERE {
-                    ckg:FimDataField ckg:used <${from}> .
-                    ?dataFieldInstance a <${from}> .
-                }`;
-            let quadsStream = await queryEngine.queryQuads(query, { sources: [store] });
-            let quads = await quadsStream.toArray();
-            for (let quad of quads) {
-                userProfileDataset.add(quad);
-            }
-        }
+        await(materialiseInferenceInMemory(userProfileDataset));
     }
 
     let summary = {
@@ -69,14 +33,14 @@ export async function validateAll(userProfileDataset, useInference, callback) {
         },
     };
 
-    fs.readdir(shaclDir, async (err, files) => {
+    fs.readdir(SHACL_DIR, async (err, files) => {
         if (err) {
             console.error(err);
             return;
         }
         for (const shaclFile of files) {
             let requirementProfile = shaclFile.split(".")[0];
-            const dataset = await rdf.dataset().import(fromFile(`${shaclDir}/${shaclFile}`));
+            const dataset = await rdf.dataset().import(fromFile(`${SHACL_DIR}/${shaclFile}`));
             await dataset.import(userProfileDataset.toStream());
             // console.log(await rdf.io.dataset.toText('text/turtle', dataset));
             const validator = new Validator(dataset, { factory: rdfDataModel });
@@ -101,3 +65,45 @@ export async function validateAll(userProfileDataset, useInference, callback) {
         callback(summary);
     });
 }
+
+async function materialiseInferenceInMemory(userProfileDataset) {
+    let store = new Store();
+    store.import(userProfileDataset.toStream());
+    let sameAsPairs = [];
+
+    const queryEngineFile = new QueryEngineFile();
+    let query = `
+        PREFIX owl: <http://www.w3.org/2002/07/owl#>
+        SELECT * WHERE {
+            ?s owl:sameAs ?o .
+        }`;
+    const bindingsStream = await queryEngineFile.queryBindings(query, {
+        sources: [{ type: "file", value: INFERENCE_FILE }],
+    });
+    let bindings = await bindingsStream.toArray();
+    for (let binding of bindings) {
+        sameAsPairs.push([binding.get("s").value, binding.get("o").value]);
+    }
+
+    const queryEngine = new QueryEngine();
+    for (let pair of sameAsPairs) {
+        let from = pair[0];
+        let to = pair[1];
+        query = `
+            PREFIX ckg: <http://ckg.de/default#>
+            PREFIX fim: <https://test.schema-repository.fitko.dev/fields/baukasten/>
+            CONSTRUCT {
+                ckg:FimDataField ckg:used <${to}> .
+                ?dataFieldInstance a <${to}> .
+            } WHERE {
+                ckg:FimDataField ckg:used <${from}> .
+                ?dataFieldInstance a <${from}> .
+            }`;
+        let quadsStream = await queryEngine.queryQuads(query, { sources: [store] });
+        let quads = await quadsStream.toArray();
+        for (let quad of quads) {
+            userProfileDataset.add(quad);
+        }
+    }
+}
+
