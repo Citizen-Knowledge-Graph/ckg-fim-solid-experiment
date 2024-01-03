@@ -89,6 +89,7 @@
             </td>
             <td>
                 <button id="refresh-btn">Refresh</button>
+                <button id="clear-btn">Clear</button>
                 <br/><br/>
                 <textarea id="turtle-viewer"></textarea>
             </td>
@@ -220,6 +221,10 @@
                 turtleViewer.setValue(json.turtle);
                 turtleViewer.setSize(null, turtleViewer.getScrollInfo().height);
             });
+    });
+
+    document.getElementById("clear-btn").addEventListener("click", () => {
+        fetch(`${SERVER}/clearData`, { method: "DELETE" }).then(() => turtleViewer.setValue(""));
     });
 
     document.getElementById("check-btn").addEventListener("click", () => {

@@ -48,3 +48,13 @@ export async function solidWrite(triples) {
         '@comunica/actor-http-inrupt-solid-client-authn:session': session,
     });
 }
+
+export async function solidClear() {
+    const engine = new QueryEngine();
+    let query = `DELETE WHERE { ?s ?p ?o }`;
+
+    await engine.queryVoid(query, {
+        sources: [PROFILE_URL],
+        '@comunica/actor-http-inrupt-solid-client-authn:session': session,
+    });
+}

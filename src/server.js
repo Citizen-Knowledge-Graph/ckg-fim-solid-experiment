@@ -1,5 +1,5 @@
 import express from "express";
-import { solidAuth, solidWrite, solidRead } from "./solid.js";
+import { solidAuth, solidWrite, solidRead, solidClear } from "./solid.js";
 import { validateAll } from "./validation.js";
 import { datasetToTurtle } from "./util.js";
 
@@ -23,6 +23,12 @@ app.get("/viewData", async (req, res) => {
     await solidRead(async dataset => {
         res.send({ turtle: await datasetToTurtle(dataset) });
     });
+});
+
+app.delete("/clearData", async (req, res) => {
+    await solidAuth();
+    await solidClear();
+    res.send({});
 });
 
 app.get("/runChecks", async (req, res) => {
