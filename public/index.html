@@ -7,25 +7,245 @@
         body {
             font-family: Arial, sans-serif;
         }
-        .rounded-rect {
-            display: inline-block;
-            border-radius: 15px;
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            text-decoration: none;
-            text-align: center;
-            box-shadow: 0 2px 6px 0 rgba(0,0,0,0.3);
+        .autocomplete-container {
+            position: relative;
+            width: 400px;
+        }
+        #autocomplete {
+            width: 100%;
+        }
+        #autocomplete-list {
+            position: absolute;
+            border: 1px solid #d4d4d4;
+            border-bottom: none;
+            border-top: none;
+            z-index: 99;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: #fff;
+        }
+        .autocomplete-items {
+            padding: 10px;
+            cursor: pointer;
+            background-color: #fff;
+            border-bottom: 1px solid #d4d4d4;
+            font-size: 14px;
+        }
+        .autocomplete-items:hover {
+            background-color: #7DF9FF;
+        }
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        .no-style, .no-style th, .no-style td {
+            border: none !important;
+        }
+        td {
+            vertical-align: top;
+            padding: 10px;
         }
     </style>
+    <script src="/data-fields-shacl-shapes.js"></script>
+    <!-- https://github.com/ULB-Darmstadt/shacl-form -->
+    <script src="/@ulb-darmstadt/shacl-form/dist/form-default.js" type="module"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/turtle/turtle.min.js"></script>
 </head>
 <body>
-    <div style="padding: 30px">
-        <a href="/add" class="rounded-rect">Add data fields</a>
-        &nbsp;&nbsp;&nbsp;
-        <a href="/view" class="rounded-rect">View data profile</a>
-        &nbsp;&nbsp;&nbsp;
-        <a href="/check" class="rounded-rect">Run eligibility checks</a>
-    </div>
+    <table>
+        <tr>
+            <td>
+                <b>Add data fields to your profile</b>
+            </td>
+            <td>
+                <b>See profile data</b>
+            </td>
+            <td>
+                <b>Check eligibility</b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table class="no-style">
+                    <tr>
+                        <td>
+                            <div class="autocomplete-container">
+                                <input id="autocomplete" type="text" placeholder="FIM data field">
+                                <div id="autocomplete-list"></div>
+                            </div>
+                        </td>
+                        <td>
+                            &nbsp;
+                            <button id="select-btn">Select</button>
+                        </td>
+                    </tr>
+                </table>
+                <div style="width: 500px">
+                    <shacl-form id="shacl-form" style="display: none" data-submit-button="Add"></shacl-form>
+                </div>
+            </td>
+            <td>
+                <button id="refresh-btn">Refresh</button>
+                <br/><br/>
+                <textarea id="turtle-viewer"></textarea>
+            </td>
+            <td>
+                <button id="check-btn">Run checks</button>
+                &nbsp;&nbsp;
+                <label>
+                    <input type="checkbox" id="use-inference-toggle" /><small>Use inference</small>
+                </label>
+                <br/><br/>
+                <div id="result-container"></div>
+            </td>
+        </tr>
+    </table>
 </body>
+<script>
+    console.log("FIM data fields SHACL shapes:", dataFieldsShaclShapes)
+
+    const SERVER = "http://localhost:3030";
+
+    const PREFIX = {
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "sh": "http://www.w3.org/ns/shacl#",
+        "fim": "https://test.schema-repository.fitko.dev/fields/baukasten/",
+        "ckg": "http://ckg.de/default#"
+    };
+
+    const turtleViewer = CodeMirror.fromTextArea(document.getElementById("turtle-viewer"), {
+        lineNumbers: true,
+        readOnly: false,
+        mode: "turtle"
+    });
+
+    let selected = {}; // selected FIM data field
+
+    const shaclForm = document.querySelector("shacl-form")
+
+    shaclForm.addEventListener("submit", () => {
+        let nTriples = shaclForm.serialize("N-Triples")
+        nTriples += `
+            <${PREFIX.ckg}FimDataField> <${PREFIX.ckg}used> <${PREFIX.fim}${selected.fimId}> .
+            <${PREFIX.fim}${selected.fimId}> <${PREFIX.rdfs}label> "${selected.label}" .
+            <${PREFIX.fim}${selected.fimId}> <${PREFIX.ckg}hasFimVersion> "${selected.fimVersion}" .
+            <${PREFIX.ckg}main-person> <${PREFIX.ckg}hasFimDataFieldValue> <${selected.instanceId}> .
+        `;
+
+        fetch(`${SERVER}/insertData`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ nTriples: nTriples })
+        })
+            .then(() => {
+                selected = {};
+                shaclForm.style.display = "none";
+                document.getElementById('autocomplete').value = "";
+            })
+            .catch(err => console.error(err));
+    });
+
+    document.getElementById('autocomplete').addEventListener('input', function() {
+        let inputVal = this.value;
+        let autocompleteList = document.getElementById('autocomplete-list');
+        autocompleteList.innerHTML = '';
+        if (!inputVal) return;
+
+        fetch(`https://test.schema-repository.fitko.dev/api/v0/fields?name=${inputVal}&offset=0&limit=10&show_all=false`, {
+            method: 'GET',
+            headers: { 'accept': 'application/json' }
+        })
+            .then(response => response.json())
+            .then(data => {
+                let filteredItems = filterItemsWithHighestVersion(data.items);
+
+                for (let item of filteredItems) {
+                    const dataFieldDetails = dataFieldsShaclShapes[`${item.fim_id}/${item.fim_version}`];
+
+                    let div = document.createElement('div');
+                    div.innerHTML = `${item.name} (id: ${item.fim_id}, fim: ${item.fim_version}, xdf: ${item.xdf_version})`;
+                    div.className = 'autocomplete-items';
+                    if (dataFieldDetails) {
+                        div.style.backgroundColor = 'LightGoldenRodYellow';
+                    }
+                    div.addEventListener('click', function() {
+                        if (!dataFieldDetails) {
+                            alert("No SHACL shape found for this FIM data field");
+                            return;
+                        }
+                        document.getElementById('autocomplete').value = item.name;
+                        autocompleteList.innerHTML = '';
+                        selected = dataFieldDetails;
+                        selected.label = item.name;
+                        console.log("Selected FIM data field:", selected);
+                    });
+                    autocompleteList.appendChild(div);
+                }
+            });
+    });
+
+    function filterItemsWithHighestVersion(items) {
+        let groupedItems = {};
+        for (let item of items) {
+            if (!groupedItems[item.fim_id] || groupedItems[item.fim_id].fim_version < item.fim_version) {
+                groupedItems[item.fim_id] = item;
+            }
+        }
+        return Object.values(groupedItems);
+    }
+
+    document.getElementById("select-btn").addEventListener("click", function() {
+        selected.instanceId = `${PREFIX.ckg}${selected.fimId}_${randStr(4)}`;
+        const shaclForm = document.querySelector("shacl-form");
+        shaclForm.setAttribute("data-shapes", selected.shape);
+        shaclForm.setAttribute("data-value-subject", selected.instanceId);
+        shaclForm.style.display = "block";
+        console.log("Instance Id:", selected.instanceId);
+        console.log("SHACL shape:\n", selected.shape);
+    });
+
+    function randStr(length) {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        return Array.from({ length }, () => characters.charAt(Math.floor(Math.random() * characters.length))).join("");
+    }
+
+    document.getElementById("refresh-btn").addEventListener("click", () => {
+        fetch(`${SERVER}/viewData`)
+            .then(response => response.json())
+            .then(json => {
+                turtleViewer.setValue(json.turtle);
+                turtleViewer.setSize(null, turtleViewer.getScrollInfo().height);
+            });
+    });
+
+    document.getElementById("check-btn").addEventListener("click", () => {
+        const useInference = document.getElementById("use-inference-toggle").checked;
+        fetch(`${SERVER}/runChecks?useInference=${useInference}`)
+            .then(response => response.json())
+            .then(json => {
+                let summary = json.summary;
+                let resultContainer = document.getElementById("result-container");
+                resultContainer.innerHTML = "";
+                for (let key in summary) {
+                    let resultCategory = summary[key];
+                    let requirementProfiles = resultCategory.arr;
+                    if (requirementProfiles.length === 0) continue;
+                    let headline = document.createElement("h3");
+                    headline.textContent = resultCategory.label;
+                    resultContainer.appendChild(headline);
+                    let list = document.createElement("ul");
+                    requirementProfiles.forEach(item => {
+                        let li = document.createElement("li");
+                        li.textContent = item;
+                        list.appendChild(li);
+                    });
+                    resultContainer.appendChild(list);
+                }
+            });
+    });
+</script>
 </html>
