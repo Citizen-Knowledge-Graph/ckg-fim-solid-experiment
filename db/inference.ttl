@@ -1,5 +1,5 @@
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix fim: <https://test.schema-repository.fitko.dev/fields/baukasten/> .
 
-# Aktueller Wohnsitz v1.0 == Wohnort v1.0
-fim:F03003228 owl:sameAs fim:F03010085 .
+# Wohnort v1.0 == Aktueller Wohnsitz v1.0
+fim:F03010085 owl:sameAs fim:F03003228 .
