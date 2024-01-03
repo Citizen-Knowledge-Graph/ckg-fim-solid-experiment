@@ -72,6 +72,7 @@ async function materialiseInferenceInMemory(userProfileDataset) {
     let sameAsPairs = [];
 
     const queryEngineFile = new QueryEngineFile();
+    await queryEngineFile.invalidateHttpCache();
     let query = `
         PREFIX owl: <http://www.w3.org/2002/07/owl#>
         SELECT * WHERE {
@@ -86,6 +87,7 @@ async function materialiseInferenceInMemory(userProfileDataset) {
     }
 
     const queryEngine = new QueryEngine();
+    await queryEngine.invalidateHttpCache();
     for (let pair of sameAsPairs) {
         let from = pair[0];
         let to = pair[1];
