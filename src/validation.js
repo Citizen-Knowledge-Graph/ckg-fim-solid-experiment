@@ -5,9 +5,30 @@ import fromFile from "rdf-utils-fs/fromFile.js";
 import rdf from "rdf-ext";
 import rdfDataModel from "@rdfjs/data-model";
 import Validator from "shacl-engine/Validator.js";
+import { Store } from "n3";
+import { QueryEngine } from "@comunica/query-sparql-rdfjs";
 
-export function validateAll(userProfileDataset, useInference, callback) {
+export async function validateAll(userProfileDataset, useInference, callback) {
     const dir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "db", "shacl");
+
+    if (useInference) {
+        const queryEngine = new QueryEngine();
+        let store = new Store();
+        store.import(userProfileDataset.toStream());
+        let query = `
+            PREFIX ckg: <http://ckg.de/default#>
+            PREFIX fim: <https://test.schema-repository.fitko.dev/fields/baukasten/>
+            CONSTRUCT {
+                ?fimId ckg:foo ckg:bar .
+            } WHERE {
+                ckg:FimDataField ckg:used ?fimId .
+            }`;
+        let quadsStream = await queryEngine.queryQuads(query, { sources: [store] });
+        let quads = await quadsStream.toArray();
+        for (let quad of quads) {
+            userProfileDataset.add(quad);
+        }
+    }
 
     let summary = {
         valid: {
