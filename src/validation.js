@@ -1,6 +1,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
+import { promises as fsPromise } from "fs";
 import fromFile from "rdf-utils-fs/fromFile.js";
 import rdf from "rdf-ext";
 import rdfDataModel from "@rdfjs/data-model";
@@ -40,14 +41,16 @@ export async function validateAll(userProfileDataset, useInference, callback) {
             return;
         }
         for (const shaclFile of files) {
-            let requirementProfile = shaclFile.split(".")[0];
-            const dataset = await rdf.dataset().import(fromFile(`${SHACL_DIR}/${shaclFile}`));
+            let path = `${SHACL_DIR}/${shaclFile}`;
+            // extract title via SPARQL or via dataset.match(null, rdf.namedNode("http://ckg.de/default#title"), null) TODO
+            const title = await extractTitleFromShaclFile(path);
+            const dataset = await rdf.dataset().import(fromFile(path));
             await dataset.import(userProfileDataset.toStream());
             // console.log(await rdf.io.dataset.toText('text/turtle', dataset));
             const validator = new Validator(dataset, { factory: rdfDataModel });
             const report = await validator.validate({ dataset });
             if (report.conforms) {
-                summary.valid.arr.push(requirementProfile);
+                summary.valid.arr.push(title);
                 continue;
             }
             let hasMissingData = false;
@@ -58,13 +61,21 @@ export async function validateAll(userProfileDataset, useInference, callback) {
                 }
             }
             if (hasMissingData) {
-                summary.missingData.arr.push(requirementProfile);
+                summary.missingData.arr.push(title);
                 continue;
             }
-            summary.invalid.arr.push(requirementProfile);
+            summary.invalid.arr.push(title);
         }
         callback(summary);
     });
+}
+
+async function extractTitleFromShaclFile(path) {
+    const data = await fsPromise.readFile(path, "utf8");
+    const titleRegex = /ckg:title\s*"([^"]+)"/;
+    const match = data.match(titleRegex);
+    if (!match) return "no title";
+    return match[1];
 }
 
 async function materialiseInferenceInMemory(userProfileDataset) {

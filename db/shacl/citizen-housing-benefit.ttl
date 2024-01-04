@@ -3,6 +3,10 @@
 @prefix ckg: <http://ckg.de/default#> .
 @prefix fim: <https://test.schema-repository.fitko.dev/fields/baukasten/> .
 
+ckg:metadata ckg:author ckg:benjaminaaron ;
+             ckg:created "2024-01-04"^^xsd:date ;
+             ckg:title "Housing Benefit" .
+
 ckg:WohnflaecheOk
     a sh:NodeShape ;
     sh:targetClass fim:F00003175 ;

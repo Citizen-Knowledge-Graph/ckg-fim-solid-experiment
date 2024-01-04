@@ -3,6 +3,10 @@
 @prefix ckg: <http://ckg.de/default#> .
 @prefix fim: <https://test.schema-repository.fitko.dev/fields/baukasten/> .
 
+ckg:metadata ckg:author ckg:benjaminaaron ;
+             ckg:created "2024-01-04"^^xsd:date ;
+             ckg:title "Solar Panels Subsidy" .
+
 ckg:WohnflaecheOk
     a sh:NodeShape ;
     sh:targetClass fim:F00003175 ;
@@ -13,16 +17,6 @@ ckg:WohnflaecheOk
           sh:minCount 1 ;
       ] .
 
-# This is a workaround to showcase inference in the demo, we need a better strategy
-ckg:EnsureWohnsitzFieldIsUsed
-    a sh:NodeShape ;
-    sh:targetNode ckg:FimDataField ;
-    sh:property [
-          sh:path ckg:used ;
-          sh:hasValue fim:F03003228 ;
-          sh:minCount 1 ;
-      ] .
-
 ckg:WohnsitzOk
     a sh:NodeShape ;
     sh:targetClass fim:F03003228 ;
@@ -30,5 +24,15 @@ ckg:WohnsitzOk
           sh:path ckg:hasValue ;
           sh:datatype xsd:string ;
           sh:hasValue "Berlin" ;
+          sh:minCount 1 ;
+      ] .
+
+# Workaround to showcase inference in the demo, we need a better strategy
+ckg:EnsureWohnsitzFieldIsUsed
+    a sh:NodeShape ;
+    sh:targetNode ckg:FimDataField ;
+    sh:property [
+          sh:path ckg:used ;
+          sh:hasValue fim:F03003228 ;
           sh:minCount 1 ;
       ] .
