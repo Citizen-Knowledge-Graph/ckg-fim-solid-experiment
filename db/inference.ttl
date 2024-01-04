@@ -1,5 +1,14 @@
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix fim: <https://test.schema-repository.fitko.dev/fields/baukasten/> .
+@prefix ex: <http://example.org/> .
 
 # Wohnort v1.0 == Aktueller Wohnsitz v1.0
 fim:F03010085 owl:sameAs fim:F03003228 .
+
+
+# County A
+#   ex:StreetNameInCountyA ex:hasValue "Hauptstr." .
+#   ex:HouseNumberInCountyA ex:hasValue 7 .
+# County B
+#   ex:StreetAddressInCountyB ex:hasValue "Hauptstr. 7" .
+#   --> ex:StreetAddressInCountyB ex:concatenate (ex:StreetNameInCountyA ex:HouseNumberInCountyA) .

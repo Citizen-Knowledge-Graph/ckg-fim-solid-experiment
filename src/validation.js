@@ -15,6 +15,7 @@ const INFERENCE_FILE = `${DB_DIR}/inference.ttl`;
 
 export async function validateAll(userProfileDataset, useInference, callback) {
     if (useInference) {
+        // Or use a reasoner instead of doing it manually? TODO
         await(materialiseInferenceInMemory(userProfileDataset));
     }
 
