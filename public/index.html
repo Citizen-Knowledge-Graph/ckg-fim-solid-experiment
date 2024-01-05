@@ -7,14 +7,14 @@
         body {
             font-family: Arial, sans-serif;
         }
-        .autocomplete-container {
+        .fimDataField-container {
             position: relative;
             width: 400px;
         }
-        #autocomplete {
+        #fimDataField {
             width: 100%;
         }
-        #autocomplete-list {
+        #fimDataField-list {
             position: absolute;
             border: 1px solid #d4d4d4;
             border-bottom: none;
@@ -25,14 +25,14 @@
             right: 0;
             background-color: #fff;
         }
-        .autocomplete-items {
+        .fimDataField-items {
             padding: 10px;
             cursor: pointer;
             background-color: #fff;
             border-bottom: 1px solid #d4d4d4;
             font-size: 14px;
         }
-        .autocomplete-items:hover {
+        .fimDataField-items:hover {
             background-color: #7DF9FF;
         }
         table, th, td {
@@ -78,18 +78,18 @@
                     </tr>
                     <tr>
                         <td>
-                            <div class="autocomplete-container">
-                                <input id="autocomplete" type="text" placeholder="FIM data field">
-                                <div id="autocomplete-list"></div>
+                            <div class="fimDataField-container">
+                                <input id="fimDataField" type="text" placeholder="FIM data field">
+                                <div id="fimDataField-list"></div>
                             </div>
                         </td>
                         <td>
-                            &nbsp;
                             <button id="select-btn">Select</button>
                         </td>
                     </tr>
                 </table>
-                <div style="width: 500px">
+                <br/><br/>
+                <div id="shaclFormContainer" style="width: 441px; background-color: lightgoldenrodyellow; padding: 15px 0 15px 0; display: none">
                     <shacl-form id="shacl-form" style="display: none" data-submit-button="Add"></shacl-form>
                 </div>
             </td>
@@ -101,7 +101,6 @@
             </td>
             <td>
                 <button id="check-btn">Run checks</button>
-                &nbsp;&nbsp;
                 <label>
                     <input type="checkbox" id="use-inference-toggle" /><small>Use inference</small>
                 </label>
@@ -151,20 +150,20 @@
             .then(() => {
                 selected = {};
                 shaclForm.style.display = "none";
-                document.getElementById('autocomplete').value = "";
+                document.getElementById("fimDataField").value = "";
             })
             .catch(err => console.error(err));
     });
 
-    document.getElementById('autocomplete').addEventListener('input', function() {
+    document.getElementById("fimDataField").addEventListener("input", function() {
         let inputVal = this.value;
-        let autocompleteList = document.getElementById('autocomplete-list');
-        autocompleteList.innerHTML = '';
+        let fimDataFieldList = document.getElementById("fimDataField-list");
+        fimDataFieldList.innerHTML = "";
         if (!inputVal) return;
 
         fetch(`https://test.schema-repository.fitko.dev/api/v0/fields?name=${inputVal}&offset=0&limit=10&show_all=false`, {
-            method: 'GET',
-            headers: { 'accept': 'application/json' }
+            method: "GET",
+            headers: { "accept": "application/json" }
         })
             .then(response => response.json())
             .then(data => {
@@ -173,24 +172,24 @@
                 for (let item of filteredItems) {
                     const dataFieldDetails = dataFieldsShaclShapes[`${item.fim_id}/${item.fim_version}`];
 
-                    let div = document.createElement('div');
+                    let div = document.createElement("div");
                     div.innerHTML = `${item.name} (id: ${item.fim_id}, fim: ${item.fim_version}, xdf: ${item.xdf_version})`;
-                    div.className = 'autocomplete-items';
+                    div.className = "fimDataField-items";
                     if (dataFieldDetails) {
-                        div.style.backgroundColor = 'LightGoldenRodYellow';
+                        div.style.backgroundColor = "LightGoldenRodYellow";
                     }
-                    div.addEventListener('click', function() {
+                    div.addEventListener("click", function() {
                         if (!dataFieldDetails) {
                             alert("No SHACL shape found for this FIM data field");
                             return;
                         }
-                        document.getElementById('autocomplete').value = item.name;
-                        autocompleteList.innerHTML = '';
+                        document.getElementById("fimDataField").value = item.name;
+                        fimDataFieldList.innerHTML = "";
                         selected = dataFieldDetails;
                         selected.label = item.name;
                         console.log("Selected FIM data field:", selected);
                     });
-                    autocompleteList.appendChild(div);
+                    fimDataFieldList.appendChild(div);
                 }
             });
     });
@@ -206,6 +205,7 @@
     }
 
     document.getElementById("select-btn").addEventListener("click", function() {
+        document.getElementById("shaclFormContainer").style.display = "block";
         selected.instanceId = `${PREFIX.ckg}${selected.fimId}_${randStr(4)}`;
         const shaclForm = document.querySelector("shacl-form");
         shaclForm.setAttribute("data-shapes", selected.shape);
@@ -216,7 +216,7 @@
     });
 
     function randStr(length) {
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         return Array.from({ length }, () => characters.charAt(Math.floor(Math.random() * characters.length))).join("");
     }
 
