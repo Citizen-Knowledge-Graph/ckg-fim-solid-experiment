@@ -7,22 +7,20 @@ ckg:metadata ckg:author ckg:benjaminaaron ;
              ckg:created "2024-01-04"^^xsd:date ;
              ckg:title "Housing Benefit" .
 
-ckg:WohnflaecheOk
+ckg:PricePerSquareMeterOk
     a sh:NodeShape ;
-    sh:targetClass fim:F00003175 ;
-    sh:property [
-          sh:path ckg:hasValue ;
-          sh:datatype xsd:integer ;
-          sh:maxInclusive 60 ;
-          sh:minCount 1 ;
-      ] .
-
-ckg:MieteOk
-    a sh:NodeShape ;
-    sh:targetClass fim:F00000240 ;
-    sh:property [
-          sh:path ckg:hasValue ;
-          sh:datatype xsd:integer ;
-          sh:minInclusive 800 ;
-          sh:minCount 1 ;
+    sh:targetClass ckg:Citizen ;
+    sh:sparql [
+          a sh:SPARQLConstraint ;
+          sh:message "Price per square meter exceeds 16" ;
+          sh:select """
+            PREFIX ckg: <http://ckg.de/default#>
+            PREFIX fim: <https://test.schema-repository.fitko.dev/fields/baukasten/>
+            SELECT $this WHERE {
+                $this ckg:hasFimDataFieldValue ?rentField, ?areaField .
+                ?rentField a fim:F00000240 ; ckg:hasValue ?rent .
+                ?areaField a fim:F00003175 ; ckg:hasValue ?area .
+                FILTER(?rent / ?area > 16) .
+            }
+        """ ;
       ] .

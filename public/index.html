@@ -116,6 +116,7 @@
     const SERVER = "http://localhost:3030";
 
     const PREFIX = {
+        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
         "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
         "xsd": "http://www.w3.org/2001/XMLSchema#",
         "sh": "http://www.w3.org/ns/shacl#",
@@ -136,6 +137,7 @@
     shaclForm.addEventListener("submit", () => {
         let nTriples = shaclForm.serialize("N-Triples")
         nTriples += `
+            <${PREFIX.ckg}main-person> <${PREFIX.rdf}type> <${PREFIX.ckg}Citizen> .
             <${PREFIX.ckg}FimDataField> <${PREFIX.ckg}used> <${PREFIX.fim}${selected.fimId}> .
             <${PREFIX.fim}${selected.fimId}> <${PREFIX.rdfs}label> "${selected.label}" .
             <${PREFIX.fim}${selected.fimId}> <${PREFIX.ckg}hasFimVersion> "${selected.fimVersion}" .
