@@ -9,7 +9,7 @@ node fim.js # comment methods at the bottom in or out as needed
 Start the Community Solid Server:
 
 ```shell
-npx @solid/community-server -c @css:config/file.json -f .solid
+npm run solid
 ```
 
 At first start, go to `localhost:3000` in the browser and:
