@@ -90,7 +90,7 @@
                 </table>
                 <br/><br/>
                 <div id="shaclFormContainer" style="width: 441px; background-color: lightgoldenrodyellow; padding: 15px 0 15px 0; display: none">
-                    <shacl-form id="shacl-form" style="display: none" data-submit-button="Add"></shacl-form>
+                    <shacl-form id="shacl-form" data-submit-button="Add"></shacl-form>
                 </div>
             </td>
             <td>
@@ -149,7 +149,7 @@
         })
             .then(() => {
                 selected = {};
-                shaclForm.style.display = "none";
+                document.getElementById("shaclFormContainer").style.display = "none";
                 document.getElementById("fimDataField").value = "";
             })
             .catch(err => console.error(err));
@@ -194,6 +194,7 @@
                             return;
                         }
                         document.getElementById("fimDataField").value = item.name;
+                        fimDataFieldList.innerHTML = "";
                         selected = dataFieldDetails;
                         selected.label = item.name;
                         console.log("Selected FIM data field:", selected);
@@ -219,7 +220,6 @@
         const shaclForm = document.querySelector("shacl-form");
         shaclForm.setAttribute("data-shapes", selected.shape);
         shaclForm.setAttribute("data-value-subject", selected.instanceId);
-        shaclForm.style.display = "block";
         console.log("Instance Id:", selected.instanceId);
         console.log("SHACL shape:\n", selected.shape);
     });
