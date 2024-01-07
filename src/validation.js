@@ -108,11 +108,9 @@ async function materialiseInferenceInMemory(userProfileDataset) {
             PREFIX ckg: <http://ckg.de/default#>
             PREFIX fim: <https://test.schema-repository.fitko.dev/fields/baukasten/>
             CONSTRUCT {
-                ckg:FimDataField ckg:used <${to}> .
-                ?dataFieldInstance a <${to}> .
+                ckg:mainPerson <${to}> ?value .
             } WHERE {
-                ckg:FimDataField ckg:used <${from}> .
-                ?dataFieldInstance a <${from}> .
+                ckg:mainPerson <${from}> ?value .
             }`;
         let quadsStream = await queryEngine.queryQuads(query, { sources: [store] });
         let quads = await quadsStream.toArray();

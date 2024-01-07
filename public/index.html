@@ -141,12 +141,14 @@
     const shaclForm = document.querySelector("shacl-form")
 
     shaclForm.addEventListener("submit", () => {
-        let nTriples = shaclForm.serialize("N-Triples")
+        let fimPredicate = `${PREFIX.ckg}has${selected.fimId}Value`;
+        // this filtering away of the line with "a" is a strange workaround, would be better to work more aligned with the library
+        let nTriples = shaclForm.serialize("N-Triples").split("\n").find(line => line.includes(fimPredicate));
         nTriples += `
-            <${PREFIX.ckg}FimDataField> <${PREFIX.ckg}used> <${PREFIX.fim}${selected.fimId}> .
-            <${PREFIX.fim}${selected.fimId}> <${PREFIX.rdfs}label> "${selected.label}" .
-            <${PREFIX.fim}${selected.fimId}> <${PREFIX.ckg}hasFimVersion> "${selected.fimVersion}" .
-            <${PREFIX.ckg}mainPerson> <${PREFIX.ckg}hasFimDataFieldValue> <${selected.instanceId}> .
+            <${fimPredicate}> <${PREFIX.rdf}type> <${PREFIX.ckg}FimDataFieldProperty> .
+            <${fimPredicate}> <${PREFIX.ckg}hasFimId> <${PREFIX.fim}${selected.fimId}> .
+            <${fimPredicate}> <${PREFIX.rdfs}label> "${selected.label}" .
+            <${fimPredicate}> <${PREFIX.ckg}hasFimVersion> "${selected.fimVersion}" .
         `;
 
         fetch(`${SERVER}/insertData`, {
@@ -223,11 +225,9 @@
 
     document.getElementById("select-btn").addEventListener("click", function() {
         document.getElementById("shaclFormContainer").style.display = "block";
-        selected.instanceId = `${PREFIX.ckg}${selected.fimId}_${randStr(4)}`;
         const shaclForm = document.querySelector("shacl-form");
         shaclForm.setAttribute("data-shapes", selected.shape);
-        shaclForm.setAttribute("data-value-subject", selected.instanceId);
-        console.log("Instance Id:", selected.instanceId);
+        shaclForm.setAttribute("data-value-subject", `${PREFIX.ckg}mainPerson`);
         console.log("SHACL shape:\n", selected.shape);
     });
 

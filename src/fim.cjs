@@ -147,7 +147,7 @@ fim:${fimId} a sh:NodeShape ;
             shaclShape += `
         sh:maxCount     1 ;
         sh:name         '${entry.constraints.title}' ;
-        sh:path         ckg:hasValue ;
+        sh:path         ckg:has${fimId}Value ;
     ] .`;
 
             shaclShapesMap[key] = {

@@ -7,19 +7,13 @@ ckg:metadata ckg:author ckg:benjaminaaron ;
              ckg:created "2024-01-04"^^xsd:date ;
              ckg:title "House Insulation Subsidy" .
 
-ckg:WohnflaecheOk
+ckg:WohnflaecheConstraint
     a sh:NodeShape ;
-    sh:targetClass fim:F00003175 ;
+    sh:targetClass ckg:Citizen ;
     sh:property [
-          sh:path ckg:hasValue ;
+          sh:path ckg:hasF00003175Value ;
           sh:datatype xsd:integer ;
-          sh:minInclusive 75 ;
+          sh:minInclusive 200 ;
           sh:minCount 1 ;
-      ] ;
-    # This doesn't really follow the schema, it is a workaround to cause a missing-data entry in the demo
-    sh:property [
-          sh:path ckg:hasHouseAge ;
-          sh:datatype xsd:integer ;
-          sh:minInclusive 50 ;
-          sh:minCount 1 ;
+          sh:message "Wohnflaeche must be at least 200" ;
       ] .
