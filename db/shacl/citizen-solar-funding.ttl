@@ -5,6 +5,7 @@
 
 ckg:metadata ckg:author ckg:benjaminaaron ;
              ckg:created "2024-01-04"^^xsd:date ;
+             ckg:modified "2024-01-07"^^xsd:date ;
              ckg:title "Solar Panels Subsidy" .
 
 ckg:WohnflaecheAndWohnsitzConstraint
