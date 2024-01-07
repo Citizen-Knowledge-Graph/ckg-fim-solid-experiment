@@ -16,6 +16,7 @@ ckg:WohnflaecheOk
           sh:minInclusive 75 ;
           sh:minCount 1 ;
       ] ;
+    # This doesn't really follow the schema, it is a workaround to cause a missing-data entry in the demo
     sh:property [
           sh:path ckg:hasHouseAge ;
           sh:datatype xsd:integer ;
