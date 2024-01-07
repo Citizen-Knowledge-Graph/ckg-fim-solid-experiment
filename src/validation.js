@@ -55,6 +55,7 @@ export async function validateAll(userProfileDataset, useInference, callback) {
             }
             let hasMissingData = false;
             for (let result of report.results) {
+                // HasValueConstraintComponent too?
                 if (result.constraintComponent.value.split("#")[1] === "MinCountConstraintComponent") {
                     hasMissingData = true;
                     break;

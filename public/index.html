@@ -72,6 +72,12 @@
                 <table class="no-style">
                     <tr>
                         <td>
+                            <button id="create-btn">Create profile</button>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>
                             <input type="text" style="width: 100%" placeholder="EU Vocabularies" disabled>
                         </td>
                         <td></td>
@@ -137,11 +143,10 @@
     shaclForm.addEventListener("submit", () => {
         let nTriples = shaclForm.serialize("N-Triples")
         nTriples += `
-            <${PREFIX.ckg}main-person> <${PREFIX.rdf}type> <${PREFIX.ckg}Citizen> .
             <${PREFIX.ckg}FimDataField> <${PREFIX.ckg}used> <${PREFIX.fim}${selected.fimId}> .
             <${PREFIX.fim}${selected.fimId}> <${PREFIX.rdfs}label> "${selected.label}" .
             <${PREFIX.fim}${selected.fimId}> <${PREFIX.ckg}hasFimVersion> "${selected.fimVersion}" .
-            <${PREFIX.ckg}main-person> <${PREFIX.ckg}hasFimDataFieldValue> <${selected.instanceId}> .
+            <${PREFIX.ckg}mainPerson> <${PREFIX.ckg}hasFimDataFieldValue> <${selected.instanceId}> .
         `;
 
         fetch(`${SERVER}/insertData`, {
@@ -268,6 +273,20 @@
                     resultContainer.appendChild(list);
                 }
             });
+    });
+
+    document.getElementById("create-btn").addEventListener("click", function() {
+        let nTriples = `<${PREFIX.ckg}mainPerson> <${PREFIX.rdf}type> <${PREFIX.ckg}Citizen> .`;
+
+        fetch(`${SERVER}/insertData`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ nTriples: nTriples })
+        })
+            .then(() => {
+                document.getElementById("create-btn").disabled = true;
+            })
+            .catch(err => console.error(err));
     });
 </script>
 </html>
