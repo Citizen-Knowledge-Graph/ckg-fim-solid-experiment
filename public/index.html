@@ -143,6 +143,7 @@
     shaclForm.addEventListener("submit", () => {
         let fimPredicate = `${PREFIX.ckg}has${selected.fimId}Value`;
         // this filtering away of the line with "a" is a strange workaround, would be better to work more aligned with the library
+        // use shaclForm.toRDF() instead? https://github.com/ULB-Darmstadt/shacl-form#element-functions
         let nTriples = shaclForm.serialize("N-Triples").split("\n").find(line => line.includes(fimPredicate));
         nTriples += `
             <${fimPredicate}> <${PREFIX.rdf}type> <${PREFIX.ckg}FimDataFieldProperty> .
