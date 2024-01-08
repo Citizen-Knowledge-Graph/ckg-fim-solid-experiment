@@ -3,36 +3,36 @@ const dataFieldsShaclShapes = {
   "F00003175/1.0": {
     "fimId": "F00003175",
     "fimVersion": "1.0",
-    "shape": "\n@prefix sh: <http://www.w3.org/ns/shacl#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix ckg: <http://ckg.de/default#> .\n@prefix fim: <https://test.schema-repository.fitko.dev/fields/baukasten/> .\n\nfim:F00003175 a sh:NodeShape ;\n    sh:property [\n        sh:datatype     xsd:integer ;\n        sh:minInclusive 1 ;\n        sh:maxCount     1 ;\n        sh:name         'Wohnfläche in m²' ;\n        sh:path         ckg:hasF00003175Value ;\n    ] ."
+    "shape": "\n@prefix sh: <http://www.w3.org/ns/shacl#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix ckg: <http://ckg.de/default#> .\n@prefix fim: <https://test.schema-repository.fitko.dev/fields/baukasten/> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n\nfim:F00003175 a rdfs:Class, sh:NodeShape ;\n    sh:property [\n        sh:datatype     xsd:integer ;\n        sh:minInclusive 1 ;\n        sh:maxCount     1 ;\n        sh:name         'Wohnfläche in m²' ;\n        sh:path         ckg:hasF00003175Value ;\n    ] ."
   },
   "F03010085/1.0": {
     "fimId": "F03010085",
     "fimVersion": "1.0",
-    "shape": "\n@prefix sh: <http://www.w3.org/ns/shacl#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix ckg: <http://ckg.de/default#> .\n@prefix fim: <https://test.schema-repository.fitko.dev/fields/baukasten/> .\n\nfim:F03010085 a sh:NodeShape ;\n    sh:property [\n        sh:datatype     xsd:string ;\n        sh:minLength    1 ;\n        sh:maxCount     1 ;\n        sh:name         'Wohnort' ;\n        sh:path         ckg:hasF03010085Value ;\n    ] ."
+    "shape": "\n@prefix sh: <http://www.w3.org/ns/shacl#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix ckg: <http://ckg.de/default#> .\n@prefix fim: <https://test.schema-repository.fitko.dev/fields/baukasten/> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n\nfim:F03010085 a rdfs:Class, sh:NodeShape ;\n    sh:property [\n        sh:datatype     xsd:string ;\n        sh:minLength    1 ;\n        sh:maxCount     1 ;\n        sh:name         'Wohnort' ;\n        sh:path         ckg:hasF03010085Value ;\n    ] ."
   },
   "F00000240/1.5": {
     "fimId": "F00000240",
     "fimVersion": "1.5",
-    "shape": "\n@prefix sh: <http://www.w3.org/ns/shacl#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix ckg: <http://ckg.de/default#> .\n@prefix fim: <https://test.schema-repository.fitko.dev/fields/baukasten/> .\n\nfim:F00000240 a sh:NodeShape ;\n    sh:property [\n        sh:datatype     xsd:integer ;\n        sh:minInclusive 1 ;\n        sh:maxCount     1 ;\n        sh:name         'Höhe der Miete' ;\n        sh:path         ckg:hasF00000240Value ;\n    ] ."
+    "shape": "\n@prefix sh: <http://www.w3.org/ns/shacl#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix ckg: <http://ckg.de/default#> .\n@prefix fim: <https://test.schema-repository.fitko.dev/fields/baukasten/> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n\nfim:F00000240 a rdfs:Class, sh:NodeShape ;\n    sh:property [\n        sh:datatype     xsd:integer ;\n        sh:minInclusive 1 ;\n        sh:maxCount     1 ;\n        sh:name         'Höhe der Miete' ;\n        sh:path         ckg:hasF00000240Value ;\n    ] ."
   },
   "F03005642/1.0": {
     "fimId": "F03005642",
     "fimVersion": "1.0",
-    "shape": "\n@prefix sh: <http://www.w3.org/ns/shacl#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix ckg: <http://ckg.de/default#> .\n@prefix fim: <https://test.schema-repository.fitko.dev/fields/baukasten/> .\n\nfim:F03005642 a sh:NodeShape ;\n    sh:property [\n        sh:datatype     xsd:integer ;\n        sh:minInclusive 1 ;\n        sh:maxCount     1 ;\n        sh:name         'Grundfläche in m²' ;\n        sh:path         ckg:hasF03005642Value ;\n    ] ."
+    "shape": "\n@prefix sh: <http://www.w3.org/ns/shacl#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix ckg: <http://ckg.de/default#> .\n@prefix fim: <https://test.schema-repository.fitko.dev/fields/baukasten/> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n\nfim:F03005642 a rdfs:Class, sh:NodeShape ;\n    sh:property [\n        sh:datatype     xsd:integer ;\n        sh:minInclusive 1 ;\n        sh:maxCount     1 ;\n        sh:name         'Grundfläche in m²' ;\n        sh:path         ckg:hasF03005642Value ;\n    ] ."
   },
   "F00000936/1.0": {
     "fimId": "F00000936",
     "fimVersion": "1.0",
-    "shape": "\n@prefix sh: <http://www.w3.org/ns/shacl#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix ckg: <http://ckg.de/default#> .\n@prefix fim: <https://test.schema-repository.fitko.dev/fields/baukasten/> .\n\nfim:F00000936 a sh:NodeShape ;\n    sh:property [\n        sh:datatype     xsd:integer ;\n        sh:minInclusive 1 ;\n        sh:maxCount     1 ;\n        sh:name         'Alter' ;\n        sh:path         ckg:hasF00000936Value ;\n    ] ."
+    "shape": "\n@prefix sh: <http://www.w3.org/ns/shacl#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix ckg: <http://ckg.de/default#> .\n@prefix fim: <https://test.schema-repository.fitko.dev/fields/baukasten/> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n\nfim:F00000936 a rdfs:Class, sh:NodeShape ;\n    sh:property [\n        sh:datatype     xsd:integer ;\n        sh:minInclusive 1 ;\n        sh:maxCount     1 ;\n        sh:name         'Alter' ;\n        sh:path         ckg:hasF00000936Value ;\n    ] ."
   },
   "F00000575/1.4": {
     "fimId": "F00000575",
     "fimVersion": "1.4",
-    "shape": "\n@prefix sh: <http://www.w3.org/ns/shacl#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix ckg: <http://ckg.de/default#> .\n@prefix fim: <https://test.schema-repository.fitko.dev/fields/baukasten/> .\n\nfim:F00000575 a sh:NodeShape ;\n    sh:property [\n        sh:datatype     xsd:integer ;\n        sh:minInclusive 1 ;\n        sh:maxCount     1 ;\n        sh:name         'Höhe der Einnahmen (Brutto)' ;\n        sh:path         ckg:hasF00000575Value ;\n    ] ."
+    "shape": "\n@prefix sh: <http://www.w3.org/ns/shacl#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix ckg: <http://ckg.de/default#> .\n@prefix fim: <https://test.schema-repository.fitko.dev/fields/baukasten/> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n\nfim:F00000575 a rdfs:Class, sh:NodeShape ;\n    sh:property [\n        sh:datatype     xsd:integer ;\n        sh:minInclusive 1 ;\n        sh:maxCount     1 ;\n        sh:name         'Höhe der Einnahmen (Brutto)' ;\n        sh:path         ckg:hasF00000575Value ;\n    ] ."
   },
   "F05011522/1.0": {
     "fimId": "F05011522",
     "fimVersion": "1.0",
-    "shape": "\n@prefix sh: <http://www.w3.org/ns/shacl#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix ckg: <http://ckg.de/default#> .\n@prefix fim: <https://test.schema-repository.fitko.dev/fields/baukasten/> .\n\nfim:F05011522 a sh:NodeShape ;\n    sh:property [\n        sh:datatype     xsd:integer ;\n        sh:minInclusive 1 ;\n        sh:maxCount     1 ;\n        sh:name         'Anzahl Kinder' ;\n        sh:path         ckg:hasF05011522Value ;\n    ] ."
+    "shape": "\n@prefix sh: <http://www.w3.org/ns/shacl#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n@prefix ckg: <http://ckg.de/default#> .\n@prefix fim: <https://test.schema-repository.fitko.dev/fields/baukasten/> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n\nfim:F05011522 a rdfs:Class, sh:NodeShape ;\n    sh:property [\n        sh:datatype     xsd:integer ;\n        sh:minInclusive 1 ;\n        sh:maxCount     1 ;\n        sh:name         'Anzahl Kinder' ;\n        sh:path         ckg:hasF05011522Value ;\n    ] ."
   }
 };

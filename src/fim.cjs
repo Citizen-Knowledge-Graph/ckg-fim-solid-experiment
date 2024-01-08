@@ -131,8 +131,9 @@ function createShaclShapesForSelectedDataFields() {
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix ckg: <http://ckg.de/default#> .
 @prefix fim: <https://test.schema-repository.fitko.dev/fields/baukasten/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-fim:${fimId} a sh:NodeShape ;
+fim:${fimId} a rdfs:Class, sh:NodeShape ;
     sh:property [`;
 
             if (entry.constraints.type === "string") {
