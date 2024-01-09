@@ -1,0 +1,184 @@
+@prefix : <http://ckg.de/default#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://ckg.de/default#> .
+
+<http://ckg.de/default> rdf:type owl:Ontology .
+
+#################################################################
+#    Annotation properties
+#################################################################
+
+###  http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled
+<http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled> rdf:type owl:AnnotationProperty .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://ckg.de/default#concernsArea
+:concernsArea rdf:type owl:ObjectProperty ;
+              rdfs:domain :Notification ;
+              rdfs:range :Area ;
+              owl:propertyChainAxiom ( :containsMatch
+                                       :hasRequirementProfile
+                                       :hasArea
+                                     ) .
+
+
+###  http://ckg.de/default#containsMatch
+:containsMatch rdf:type owl:ObjectProperty ;
+               rdfs:domain :Notification ;
+               rdfs:range :Match .
+
+
+###  http://ckg.de/default#hasArea
+:hasArea rdf:type owl:ObjectProperty ;
+         rdfs:domain :RequirementProfile ;
+         rdfs:range :Area .
+
+
+###  http://ckg.de/default#hasRequirementProfile
+:hasRequirementProfile rdf:type owl:ObjectProperty ;
+                       owl:inverseOf :isRequirementProfileIn ;
+                       rdfs:domain :Match ;
+                       rdfs:range :RequirementProfile .
+
+
+###  http://ckg.de/default#hasUserProfile
+:hasUserProfile rdf:type owl:ObjectProperty ;
+                owl:inverseOf :isUserProfileIn ;
+                rdfs:domain :Match ;
+                rdfs:range :UserProfile .
+
+
+###  http://ckg.de/default#isRequirementProfileIn
+:isRequirementProfileIn rdf:type owl:ObjectProperty .
+
+
+###  http://ckg.de/default#isUserProfileIn
+:isUserProfileIn rdf:type owl:ObjectProperty .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://ckg.de/default#hasBeenRead
+:hasBeenRead rdf:type owl:DatatypeProperty ;
+             rdfs:domain :Notification ;
+             rdfs:range xsd:boolean .
+
+
+###  http://ckg.de/default#isKnownToUser
+:isKnownToUser rdf:type owl:DatatypeProperty ;
+               rdfs:domain :Match ;
+               rdfs:range xsd:boolean .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://ckg.de/default#Area
+:Area rdf:type owl:Class .
+
+
+###  http://ckg.de/default#Match
+:Match rdf:type owl:Class .
+
+
+###  http://ckg.de/default#Notification
+:Notification rdf:type owl:Class .
+
+
+###  http://ckg.de/default#RequirementProfile
+:RequirementProfile rdf:type owl:Class .
+
+
+###  http://ckg.de/default#UserProfile
+:UserProfile rdf:type owl:Class .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://ckg.de/default#Match1
+:Match1 rdf:type owl:NamedIndividual ,
+                 :Match ;
+        :hasRequirementProfile :RequirementProfileSolarPanelsSubsidy ;
+        :hasUserProfile :UserProfile1 .
+
+
+###  http://ckg.de/default#Notification1
+:Notification1 rdf:type owl:NamedIndividual ,
+                        :Notification ;
+               :containsMatch :Match1 ;
+               :hasBeenRead "true"^^xsd:boolean .
+
+
+###  http://ckg.de/default#RenewableEnergySubsidies
+:RenewableEnergySubsidies rdf:type owl:NamedIndividual ,
+                                   :Area .
+
+
+###  http://ckg.de/default#RequirementProfileSolarPanelsSubsidy
+:RequirementProfileSolarPanelsSubsidy rdf:type owl:NamedIndividual ,
+                                               :RequirementProfile ;
+                                      :hasArea :RenewableEnergySubsidies .
+
+
+###  http://ckg.de/default#UserProfile1
+:UserProfile1 rdf:type owl:NamedIndividual ,
+                       :UserProfile .
+
+
+#################################################################
+#    Rules
+#################################################################
+
+:n rdf:type <http://www.w3.org/2003/11/swrl#Variable> .
+
+:m rdf:type <http://www.w3.org/2003/11/swrl#Variable> .
+
+[ <http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled> "true"^^xsd:boolean ;
+   rdfs:comment "" ;
+   rdfs:label "notif-read_match-known" ;
+   rdf:type <http://www.w3.org/2003/11/swrl#Imp> ;
+   <http://www.w3.org/2003/11/swrl#body> [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                           rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#ClassAtom> ;
+                                                       <http://www.w3.org/2003/11/swrl#classPredicate> :Notification ;
+                                                       <http://www.w3.org/2003/11/swrl#argument1> :n
+                                                     ] ;
+                                           rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                      rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom> ;
+                                                                  <http://www.w3.org/2003/11/swrl#propertyPredicate> :hasBeenRead ;
+                                                                  <http://www.w3.org/2003/11/swrl#argument1> :n ;
+                                                                  <http://www.w3.org/2003/11/swrl#argument2> "true"^^xsd:boolean
+                                                                ] ;
+                                                      rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                                 rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                                             <http://www.w3.org/2003/11/swrl#propertyPredicate> :containsMatch ;
+                                                                             <http://www.w3.org/2003/11/swrl#argument1> :n ;
+                                                                             <http://www.w3.org/2003/11/swrl#argument2> :m
+                                                                           ] ;
+                                                                 rdf:rest rdf:nil
+                                                               ]
+                                                    ]
+                                         ] ;
+   <http://www.w3.org/2003/11/swrl#head> [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                           rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom> ;
+                                                       <http://www.w3.org/2003/11/swrl#propertyPredicate> :isKnownToUser ;
+                                                       <http://www.w3.org/2003/11/swrl#argument1> :m ;
+                                                       <http://www.w3.org/2003/11/swrl#argument2> "true"^^xsd:boolean
+                                                     ] ;
+                                           rdf:rest rdf:nil
+                                         ]
+ ] .
+
+###  Generated by the OWL API (version 4.5.26.2023-07-17T20:34:13Z) https://github.com/owlcs/owlapi
