@@ -108,6 +108,16 @@
 #    Individuals
 #################################################################
 
+###  http://ckg.de/default#AreaRenewableEnergySubsidies
+:AreaRenewableEnergySubsidies rdf:type owl:NamedIndividual ,
+                                       :Area .
+
+
+###  http://ckg.de/default#AreaSocialSecurity
+:AreaSocialSecurity rdf:type owl:NamedIndividual ,
+                             :Area .
+
+
 ###  http://ckg.de/default#Match1
 :Match1 rdf:type owl:NamedIndividual ,
                  :Match ;
@@ -115,22 +125,30 @@
         :hasUserProfile :UserProfile1 .
 
 
+###  http://ckg.de/default#Match2
+:Match2 rdf:type owl:NamedIndividual ;
+        :hasRequirementProfile :RequirementProfileHousingBenefit ;
+        :hasUserProfile :UserProfile1 .
+
+
 ###  http://ckg.de/default#Notification1
 :Notification1 rdf:type owl:NamedIndividual ,
                         :Notification ;
-               :containsMatch :Match1 ;
+               :containsMatch :Match1 ,
+                              :Match2 ;
                :hasBeenRead "true"^^xsd:boolean .
 
 
-###  http://ckg.de/default#RenewableEnergySubsidies
-:RenewableEnergySubsidies rdf:type owl:NamedIndividual ,
-                                   :Area .
+###  http://ckg.de/default#RequirementProfileHousingBenefit
+:RequirementProfileHousingBenefit rdf:type owl:NamedIndividual ,
+                                           :RequirementProfile ;
+                                  :hasArea :AreaSocialSecurity .
 
 
 ###  http://ckg.de/default#RequirementProfileSolarPanelsSubsidy
 :RequirementProfileSolarPanelsSubsidy rdf:type owl:NamedIndividual ,
                                                :RequirementProfile ;
-                                      :hasArea :RenewableEnergySubsidies .
+                                      :hasArea :AreaRenewableEnergySubsidies .
 
 
 ###  http://ckg.de/default#UserProfile1
