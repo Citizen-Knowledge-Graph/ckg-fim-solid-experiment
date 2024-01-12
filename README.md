@@ -1,5 +1,11 @@
 # CKG FIM Solid Experiment
 
+This was my final project in the [Linked Data & Solid](https://www.ugain.ugent.be/LDS2023.htm) course of the Uni Ghent, presented on 2024-01-11. 
+
+📺 I recorded a [walkthrough video](https://www.youtube.com/watch?v=E9A5CuIhi58&list=PLyt46q60EbD_mT4BPbkHtHCaWCOCX-PlP&index=3) (20 min).
+
+![](screenshot.png)
+
 ## Setup
 
 ```sh
